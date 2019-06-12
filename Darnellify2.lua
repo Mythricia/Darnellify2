@@ -20,7 +20,9 @@ eventFrame:UnregisterAllEvents()
 -- Just wait for addon load for now
 eventFrame:RegisterEvent("ADDON_LOADED")
 
-local function initialize(frame)
+local function initialize()
+	eventFrame:UnregisterAllEvents()	
+
 	-- Do some user settings stuff here at some point
 	settings = Darnellify2_Settings or {}
 	
@@ -33,7 +35,7 @@ end
 
 local function parseEvent(frame, event, ...)
 	if eventHandler[event] then
-		eventHandler[event](frame, event, ...)
+		eventHandler[event](event, ...)
 	elseif DARN_DEBUG then
 		print("Event registered but not handled: \""..event.."\"")
 	end
@@ -63,14 +65,13 @@ eventList =
 
 -- Event Handlers --
 --------------------
-eventHandler["ADDON_LOADED"] = function(frame, event, ...)
+eventHandler["ADDON_LOADED"] = function(event, ...)
 	if ... == addonName then
-		frame:UnregisterEvent("ADDON_LOADED")
-		initialize(frame)
+		initialize()
 	end
 end
 
-eventHandler["MAIL_SHOW"] = function(frame, event, ...)
+eventHandler["MAIL_SHOW"] = function(event, ...)
 	local samples = collections.interface.MAILBOX_OPEN
 	local sample = samples[random(1, #samples)].path
 
