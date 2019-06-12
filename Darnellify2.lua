@@ -75,7 +75,7 @@ eventHandler["MAIL_SHOW"] = function(frame, event, ...)
 	local sample = samples[random(1, #samples)].path
 
 	local finalPath = BASE_SOUND_DIRECTORY..sample
-	print(finalPath)
+	if DARN_DEBUG then print("Playing sample: "..finalPath) end
 	PlaySoundFile(finalPath)
 end
 
