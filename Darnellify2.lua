@@ -1,7 +1,9 @@
-local addonName, addonTable = ...
+local addonName, Darnellify = ...
+local collections = Darnellify.collections
 local settings
 
 local CLIENT_MAJOR_VER = tonumber(GetBuildInfo():sub(1,1)) -- If Major version > 1, it's not WoW Classic
+local BASE_SOUND_DIRECTORY = "Interface\\AddOns\\Darnellify2\\Sounds\\"
 local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 
 -- Forward declarations
@@ -33,7 +35,7 @@ local function parseEvent(frame, event, ...)
 	if eventHandler[event] then
 		eventHandler[event](frame, event, ...)
 	elseif DARN_DEBUG then
-		print("\nEvent registered but not handled: \""..event.."\"")
+		print("Event registered but not handled: \""..event.."\"")
 	end
 end
 
@@ -72,7 +74,12 @@ eventHandler["ADDON_LOADED"] = function(frame, event, ...)
 end
 
 eventHandler["MAIL_SHOW"] = function(frame, event, ...)
-	PlaySoundFile("Interface\\AddOns\\Darnellify2\\Sounds\\Ding.mp3")
+	local samples = collections.interface.MAILBOX_OPEN
+	local sample = samples[random(1, #samples)].path
+
+	local finalPath = BASE_SOUND_DIRECTORY..sample
+	print(finalPath)
+	PlaySoundFile(finalPath)
 end
 
 
@@ -82,5 +89,5 @@ end
 ---------------
 -- Cheeky debug print to chat
 function print(msg)
-	DEFAULT_CHAT_FRAME:AddMessage("Darnellify2:: " .. tostring(msg))
+	DEFAULT_CHAT_FRAME:AddMessage("Darnellify2:: \n" .. tostring(msg))
 end
