@@ -58,9 +58,6 @@ eventList =
 	-- Classic-safe events
 	"MAIL_SHOW",
 	"MAIL_CLOSED",
-
-	-- Required
-	"ADDON_LOADED",
 }
 
 
