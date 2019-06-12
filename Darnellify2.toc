@@ -1,0 +1,8 @@
+## Interface: 80100
+## Author: |cFFFFFFFFAvael |cFF4286F4@ |rArgent Dawn |cFF003399EU
+## Version: 0.1
+## Title: Darnellify2
+## Notes: Boom, baby!
+## SavedVariables: Darnellify2_Settings
+
+Darnellify2.lua
