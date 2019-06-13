@@ -115,13 +115,17 @@ function playSampleFromCollection(collection)
 
 			-- If collection has a cooldown value, apply it and schedule the expiration
 			if collection.cooldown then
-				collectionCooldowns[collection] = true
+				collectionCooldowns[collection] = GetTime()
 				C_Timer.After(collection.cooldown, function()
 					collectionCooldowns[collection] = nil
 				end)
 			end
 		elseif DARN_DEBUG then
-			print("Sample skipped due to collection being on cooldown: "..sample.path)
+			print("Sample skipped due to collection being on cooldown: "
+			..sample.path
+			.." ("
+			..collection.cooldown - string.format("%.2f", GetTime()-collectionCooldowns[collection])
+			.."s remaining)")
 		end
 	elseif DARN_DEBUG then
 		print("Tried to play from an empty collection!")
