@@ -88,9 +88,8 @@ end
 --------------------
 -- This is just a proxy for PlaySoundFile() for now, but makes it easier to extend later
 function playSample(sample)
-	if DARN_DEBUG then print("Playing sample: "..sample.path) end
-
 	if not sampleCooldowns[sample] then
+		if DARN_DEBUG then print("Playing sample: "..sample.path) end
 		sampleCooldowns[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
