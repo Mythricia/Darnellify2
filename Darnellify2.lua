@@ -4,12 +4,13 @@ local settings
 
 local CLIENT_MAJOR_VER = tonumber(GetBuildInfo():sub(1,1)) -- If Major version > 1, it's not WoW Classic
 local BASE_SOUND_DIRECTORY = "Interface\\AddOns\\Darnellify2\\Sounds\\"
+local DEFAULT_SAMPLE_COOLDOWN = 1
 local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 
 -- Forward declarations
 local eventHandler = {}
 local eventList = {}
-local cooldownGroups = {}
+local sampleCooldowns = {}	-- This table keeps track of samples that are still on cooldown
 local playSampleFromCollection
 local playSample
 local print -- overriding this since it doesn't do anything ingame anyway
@@ -87,7 +88,18 @@ end
 -- This is just a proxy for PlaySoundFile() for now, but makes it easier to extend later
 function playSample(sample)
 	if DARN_DEBUG then print("Playing sample: "..sample.path) end
-	PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
+
+	if not sampleCooldowns[sample] then
+		sampleCooldowns[sample] = true
+		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
+
+		-- Schedule the removal of the cooldown
+		C_Timer.After(sample.cooldown or DEFAULT_SAMPLE_COOLDOWN, function()
+			sampleCooldowns[sample] = nil
+		end)
+	elseif DARN_DEBUG then
+		print("Sample skipped due to being on cooldown: "..sample.path)
+	end
 end
 
 -- Play a random sample from a collection, via playSample()
