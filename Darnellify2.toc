@@ -5,5 +5,5 @@
 ## Notes: Boom, baby!
 ## SavedVariables: Darnellify2_Settings
 
-SoundList.lua
+Collections.lua
 Darnellify2.lua
