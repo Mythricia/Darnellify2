@@ -10,7 +10,8 @@ local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 -- Forward declarations
 local eventHandler = {}
 local eventList = {}
-local sampleCooldowns = {}	-- This table keeps track of samples that are still on cooldown
+local sampleCooldowns = {}		-- Track single samples on cooldown
+local collectionCooldowns = {}	-- Track entire collections on cooldown
 local playSampleFromCollection
 local playSample
 local print -- overriding this since it doesn't do anything ingame anyway
@@ -93,7 +94,7 @@ function playSample(sample)
 		sampleCooldowns[sample] = true
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
-		-- Schedule the removal of the cooldown
+		-- Schedule the removal of sample cooldown
 		C_Timer.After(sample.cooldown or DEFAULT_SAMPLE_COOLDOWN, function()
 			sampleCooldowns[sample] = nil
 		end)
@@ -104,8 +105,24 @@ end
 
 -- Play a random sample from a collection, via playSample()
 function playSampleFromCollection(collection)
-	local sample = collection[random(1, #collection)]
-	playSample(sample)
+	if #collection > 0 then
+		local sample = collection[random(1, #collection)]
+		if not collectionCooldowns[collection] then
+			playSample(sample)
+
+			-- If collection has a cooldown value, apply it and schedule the expiration
+			if collection.cooldown then
+				collectionCooldowns[collection] = true
+				C_Timer.After(collection.cooldown, function()
+					collectionCooldowns[collection] = nil
+				end)
+			end
+		elseif DARN_DEBUG then
+			print("Sample skipped due to collection being on cooldown: "..sample.path)
+		end
+	elseif DARN_DEBUG then
+		print("Tried to play from an empty collection!")
+	end
 end
 
 

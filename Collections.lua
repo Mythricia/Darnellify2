@@ -19,6 +19,9 @@ collections.interface = {}
 collections.interface["MAILBOX_OPEN"] = {
 	{path = "Ding.mp3", cooldown = 2},
 	{path = "Crit_1.mp3", cooldown = 3},
+
+	-- collection-wide options below
+	cooldown = 5
 }
 
 
