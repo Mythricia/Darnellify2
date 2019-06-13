@@ -21,7 +21,7 @@ collections.interface["MAILBOX_OPEN"] = {
 	{path = "Crit_1.mp3", cooldown = 3},
 
 	-- collection-wide options below
-	cooldown = 5
+	cooldown = 5	-- Only one sample will play per cooldown. Remove line for 0 collection cooldown
 }
 
 

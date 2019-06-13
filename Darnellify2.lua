@@ -91,7 +91,7 @@ function playSample(sample)
 	if DARN_DEBUG then print("Playing sample: "..sample.path) end
 
 	if not sampleCooldowns[sample] then
-		sampleCooldowns[sample] = true
+		sampleCooldowns[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
 		-- Schedule the removal of sample cooldown
@@ -99,7 +99,11 @@ function playSample(sample)
 			sampleCooldowns[sample] = nil
 		end)
 	elseif DARN_DEBUG then
-		print("Sample skipped due to being on cooldown: "..sample.path)
+		print("Sample skipped due to being on cooldown: "
+		..sample.path
+		.." ("
+		..sample.cooldown - string.format("%.2f", GetTime()-sampleCooldowns[sample])
+		.."s remaining)")
 	end
 end
 
