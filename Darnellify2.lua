@@ -9,6 +9,7 @@ local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 -- Forward declarations
 local eventHandler = {}
 local eventList = {}
+local cooldownGroups = {}
 local playSampleFromCollection
 local playSample
 local print
@@ -84,14 +85,14 @@ end
 --------------------
 -- This is just a proxy for PlaySoundFile() for now, but makes it easier to extend later
 function playSample(sample)
-	PlaySoundFile(sample.path)
+	if DARN_DEBUG then print("Playing sample: "..sample.path) end
+	PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 end
 
--- Play a random sample from a collection
+-- Play a random sample from a collection, via playSample()
 function playSampleFromCollection(collection)
-	local sample = BASE_SOUND_DIRECTORY .. (collection[random(1, #collection)].path)
-	if DARN_DEBUG then print("Playing sample: "..sample) end
-	PlaySoundFile(sample)
+	local sample = collection[random(1, #collection)]
+	playSample(sample)
 end
 
 
