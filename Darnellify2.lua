@@ -9,6 +9,8 @@ local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 -- Forward declarations
 local eventHandler = {}
 local eventList = {}
+local playSampleFromCollection
+local playSample
 local print
 
 
@@ -72,15 +74,25 @@ eventHandler["ADDON_LOADED"] = function(event, ...)
 end
 
 eventHandler["MAIL_SHOW"] = function(event, ...)
-	local samples = collections.interface.MAILBOX_OPEN
-	local sample = samples[random(1, #samples)].path
-
-	local finalPath = BASE_SOUND_DIRECTORY..sample
-	if DARN_DEBUG then print("Playing sample: "..finalPath) end
-	PlaySoundFile(finalPath)
+	playSampleFromCollection(collections.interface.MAILBOX_OPEN)
 end
 
 
+
+
+-- Sample players --
+--------------------
+-- This is just a proxy for PlaySoundFile() for now, but makes it easier to extend later
+function playSample(sample)
+	PlaySoundFile(sample.path)
+end
+
+-- Play a random sample from a collection
+function playSampleFromCollection(collection)
+	local sample = BASE_SOUND_DIRECTORY .. (collection[random(1, #collection)].path)
+	if DARN_DEBUG then print("Playing sample: "..sample) end
+	PlaySoundFile(sample)
+end
 
 
 -- Utilities --
