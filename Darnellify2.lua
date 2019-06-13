@@ -12,7 +12,7 @@ local eventList = {}
 local cooldownGroups = {}
 local playSampleFromCollection
 local playSample
-local print
+local print -- overriding this since it doesn't do anything ingame anyway
 
 
 -- Misc addon setup --
@@ -28,7 +28,8 @@ local function initialize()
 
 	-- Do some user settings stuff here at some point
 	settings = Darnellify2_Settings or {}
-	
+
+	-- Register the actual events we care about now that we're loaded
 	for k, v in pairs(eventList) do
 		if type(v) == "string" then
 			eventFrame:RegisterEvent(v)
