@@ -1,7 +1,7 @@
 # Darnellify2
 
-> Avael @ Argent-Dawn EU
-> Avael#2276 @ Battle.Net EU
+> Avael @ Argent-Dawn EU   
+> Avael#2276 @ Battle.Net EU   
 
 -----
 
@@ -33,6 +33,10 @@ https://twitch.tv/akamikeb
 
 
 # Changelog
+
+## [0.5.1] - 2019-06-14
+### Changed
+- Updated and renamed Readme for GitHub
 
 ## [0.5.0] - 2019-06-14
 ### Added
