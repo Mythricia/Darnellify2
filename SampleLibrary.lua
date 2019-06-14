@@ -37,11 +37,7 @@ library.mounts.categories = {}
 library.mounts.categories["Chocobo"] =
 {
 	music = {
-<<<<<<< HEAD
 		{path = "Mount\\Chocobo_1.mp3", cooldown = 30},
-=======
-		{path = "Mount\\Chocobo_1.mp3", cooldown = 62},
->>>>>>> bacf96468c487c72b4980507d53f58d798a0885a
 	},
 
 	mounts = {
