@@ -15,13 +15,24 @@ local library = {}
 
 -- Interface Panel events
 library.interface = {}
-
 library.interface["MAILBOX_OPEN"] = {
 	{path = "Ding.mp3", cooldown = 2},
 	{path = "Crit_1.mp3", cooldown = 3},
 
 	-- collection-wide options below
 	cooldown = 5	-- Only one sample will play per cooldown. Remove line for 0 collection cooldown
+}
+
+
+-- Mount events.
+-- MountUp Music works slightly differently, it does a lookup by the mount "spellID"
+library.mounts = {}
+library.mounts["Dismount"] = {path = "Mount\\Car_Alarm.mp3", cooldown = 1}
+
+library.mounts["MountUp"] =
+{
+	[35027] = {path = "Mount\\Chocobo_1.mp3", cooldown = 10},	--"Swift Purple Hawkstrider"
+	[35020] = {path = "Mount\\My_Little_Pony_1.mp3", cooldown = 30} --"Blue Hawkstrider"
 }
 
 
