@@ -10,13 +10,13 @@ If you have a file in a subfolder: "Sounds\FunnierSounds\TheFunniest.mp3", then 
 
 
 -- This table holds all of the sounds
-local collections = {}
+local library = {}
 
 
--- Interface Panel Sounds
-collections.interface = {}
+-- Interface Panel events
+library.interface = {}
 
-collections.interface["MAILBOX_OPEN"] = {
+library.interface["MAILBOX_OPEN"] = {
 	{path = "Ding.mp3", cooldown = 2},
 	{path = "Crit_1.mp3", cooldown = 3},
 
@@ -26,6 +26,6 @@ collections.interface["MAILBOX_OPEN"] = {
 
 
 
--- Passing the whole collection back over to the core Darnellify addon code
-local _, Darnellify = ...
-Darnellify.collections = collections
+-- Passing the whole library back over to the core Darnellify addon code
+local _, addonTable = ...
+addonTable.library = library

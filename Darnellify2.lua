@@ -1,5 +1,5 @@
-local addonName, Darnellify = ...
-local collections = Darnellify.collections
+local addonName, addonTable = ...
+local library = addonTable.library
 local settings
 
 local CLIENT_MAJOR_VER = tonumber(GetBuildInfo():sub(1,1)) -- If Major version > 1, it's not WoW Classic
@@ -10,8 +10,7 @@ local DARN_DEBUG = true -- Print ugly debug messages in chatframe
 -- Forward declarations
 local eventHandler = {}
 local eventList = {}
-local sampleCooldowns = {}		-- Track single samples on cooldown
-local collectionCooldowns = {}	-- Track entire collections on cooldown
+local cooldownTimers = {}		-- Track single samples on cooldown
 local playSampleFromCollection
 local playSample
 local print -- overriding this since it doesn't do anything ingame anyway
@@ -78,7 +77,7 @@ eventHandler["ADDON_LOADED"] = function(event, ...)
 end
 
 eventHandler["MAIL_SHOW"] = function(event, ...)
-	playSampleFromCollection(collections.interface.MAILBOX_OPEN)
+	playSampleFromCollection(library.interface.MAILBOX_OPEN)
 end
 
 
@@ -88,20 +87,20 @@ end
 --------------------
 -- This is just a proxy for PlaySoundFile() for now, but makes it easier to extend later
 function playSample(sample)
-	if not sampleCooldowns[sample] then
+	if not cooldownTimers[sample] then
 		if DARN_DEBUG then print("Playing sample: "..sample.path) end
-		sampleCooldowns[sample] = GetTime()
+		cooldownTimers[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
 		-- Schedule the removal of sample cooldown
 		C_Timer.After(sample.cooldown or DEFAULT_SAMPLE_COOLDOWN, function()
-			sampleCooldowns[sample] = nil
+			cooldownTimers[sample] = nil
 		end)
 	elseif DARN_DEBUG then
 		print("Sample skipped due to being on cooldown: "
 		..sample.path
 		.." ("
-		..sample.cooldown - string.format("%.2f", GetTime()-sampleCooldowns[sample])
+		..sample.cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
 		.."s remaining)")
 	end
 end
@@ -110,21 +109,21 @@ end
 function playSampleFromCollection(collection)
 	if #collection > 0 then
 		local sample = collection[random(1, #collection)]
-		if not collectionCooldowns[collection] then
+		if not cooldownTimers[collection] then
 			playSample(sample)
 
 			-- If collection has a cooldown value, apply it and schedule the expiration
 			if collection.cooldown then
-				collectionCooldowns[collection] = GetTime()
+				cooldownTimers[collection] = GetTime()
 				C_Timer.After(collection.cooldown, function()
-					collectionCooldowns[collection] = nil
+					cooldownTimers[collection] = nil
 				end)
 			end
 		elseif DARN_DEBUG then
 			print("Sample skipped due to collection being on cooldown: "
 			..sample.path
 			.." ("
-			..collection.cooldown - string.format("%.2f", GetTime()-collectionCooldowns[collection])
+			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
 		end
 	elseif DARN_DEBUG then

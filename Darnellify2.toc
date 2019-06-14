@@ -5,5 +5,5 @@
 ## Notes: Boom, baby!
 ## SavedVariables: Darnellify2_Settings
 
-Collections.lua
+SampleLibrary.lua
 Darnellify2.lua
