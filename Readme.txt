@@ -11,11 +11,11 @@ https://www.wowinterface.com/downloads/info21093-Darnellify.html
 -----
 
 Roadmap (TBD):  
-- [ ] Simultaneous Modern & Classic compatibility
-- [ ] Easily extendable sound list in separate file
-- [ ] Sounds split into sensible categories
-- [ ] Spam prevention (cooldowns)
-- [ ] Configurable per-sound attributes (delay, cooldown)
+- [x] Simultaneous Modern & Classic compatibility
+- [x] Easily extendable sound list in separate file
+- [x] Sounds split into sensible categories
+- [x] Spam prevention (cooldowns)
+- [x] Configurable per-sound attributes (delay, cooldown)
 - [ ] In-game options GUI to enable/disable sounds
 
 Optional Extras:  
@@ -33,6 +33,13 @@ https://twitch.tv/akamikeb
 
 
 # Changelog
+
+## [0.5.0] - 2019-06-14
+### Added
+- Bare-bones working version of the addon
+- Only one voice sample added for now (opening mailbox), for testing
+- Next up is to add all the original events and samples.
+
 
 ## [0.1.0] - 2019-06-11
 ### Added
