@@ -15,7 +15,7 @@ local library = {}
 
 -- Interface Panel events
 library.interface = {}
-library.interface["MAILBOX_OPEN"] = {
+library.interface["Mailbox_Open"] = {
 	{path = "Ding.mp3", cooldown = 2},
 	{path = "Crit_1.mp3", cooldown = 3},
 
@@ -25,14 +25,24 @@ library.interface["MAILBOX_OPEN"] = {
 
 
 -- Mount events.
--- MountUp Music works slightly differently, it does a lookup by the mount "spellID"
 library.mounts = {}
-library.mounts["Dismount"] = {path = "Mount\\Car_Alarm.mp3", cooldown = 1}
+library.mounts["Dismount"] = {
+	{path = "Mount\\Car_Alarm.mp3", cooldown = 1},
+}
 
-library.mounts["MountUp"] =
+-- Mount Music works slightly differently, and is split by category.
+-- You can create new caterogies and add mount spellID's to the list of mounts from here, and they'll work.
+-- The "music" table works just like the other samples, you can add to the list the same way.
+library.mounts.categories = {}
+library.mounts.categories["Chocobo"] =
 {
-	[35027] = {path = "Mount\\Chocobo_1.mp3", cooldown = 10},	--"Swift Purple Hawkstrider"
-	[35020] = {path = "Mount\\My_Little_Pony_1.mp3", cooldown = 30} --"Blue Hawkstrider"
+	music = {
+		{path = "Mount\\Chocobo_1.mp3", cooldown = 10},
+	},
+
+	mounts = {
+		35027,  --"Swift Purple Hawkstrider"
+	}
 }
 
 
