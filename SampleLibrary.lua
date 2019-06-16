@@ -33,8 +33,7 @@ library.mounts["Dismount"] = {
 -- Mount Music works slightly differently, and is split by category.
 -- You can create new caterogies and add mount spellID's to the list of mounts from here, and they'll work.
 -- The "music" table works just like the other samples, you can add to the list the same way.
-library.mounts.categories = {}
-library.mounts.categories["Chocobo"] =
+library.mounts["Chocobo"] =
 {
 	music = {
 		{path = "Mount\\Chocobo_1.mp3", cooldown = 30},

@@ -122,7 +122,7 @@ end
 -- If we mounted up, play the correct music for the mount, if any
 eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(event, target, GUID, spellID)
 	if target == "player" then
-		for name, category in pairs(library.mounts.categories) do
+		for name, category in pairs(library.mounts) do
 			if tableContains(category.mounts, spellID) then
 				playMusicFromCollection(category.music)
 				return
