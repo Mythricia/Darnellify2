@@ -33,7 +33,7 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 local function initialize()
 	eventFrame:UnregisterAllEvents()
 
-	-- Do some user settings stuff here at some point
+	-- TODO: This doesn't do anything
 	settings = Darnellify2_Settings or {}
 
 	-- Check mount status. If dismount within 2 seconds of UI load, this will fail
