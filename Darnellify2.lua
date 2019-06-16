@@ -11,17 +11,38 @@ local FAKE_CLASSIC = false
 local MOUNTED = IsMounted()
 local PLAYING_MUSIC = false
 
+-- Color tags
+local cTag = "|cFF"
+local DarnColors = {
+	red 	= cTag.."FF0000",
+	green	= cTag.."00FF00",
+	blue	= cTag.."0000FF",
+	cyan	= cTag.."00FFFF",
+	teal	= cTag.."008080",
+	orange	= cTag.."FFA500",
+	brown	= cTag.."8B4500",
+	pink	= cTag.."EE1289",
+	purple	= cTag.."9F79EE",
+	yellow	= cTag.."FFF569",
+	white	= cTag.."FFFFFF",
+}
+local prettyName = DarnColors.yellow..addonName.."|r"
+
 -- Tables
 local eventHandler = {}
 local eventList = {}
 local cooldownTimers = {}
+local messages = {}
 
 -- Forward declarations
 local playSample
 local playSampleFromCollection
 local playMusicFromCollection
 local tableContains
-local print -- overriding for debug purposes
+local slashProcessor
+local darnPrint
+local logMessage
+
 
 
 -- Misc addon setup
@@ -53,8 +74,12 @@ end
 local function parseEvent(frame, event, ...)
 	if eventHandler[event] then
 		eventHandler[event](event, ...)
-	elseif DARN_DEBUG then
-		print("Event registered but not handled: \""..event.."\"")
+	else
+		local msg = ("Event registered but not handled: \""..event.."\"")
+		if DARN_DEBUG then
+			darnPrint(msg)
+		end
+		logMessage(msg, "WARNING")
 	end
 end
 
@@ -105,8 +130,6 @@ eventHandler["ADDON_LOADED"] = function(event, ...)
 end
 
 
--- One-liners. Could be solved more efficiently but this allows for easy future extension
-
 -- Interface events
 eventHandler["MAIL_SHOW"] = function()
 	playSampleFromCollection(library.interface.Mailbox_Open)
@@ -151,6 +174,7 @@ eventHandler["MERCHANT_CLOSED"] = function()
 	playSampleFromCollection(library.interface.Vendor_Close)
 end
 
+
 -- Player events (levelup, duel, achievement, etc)
 eventHandler["PLAYER_LEVEL_UP"] = function()
 playSampleFromCollection(library.player.Player_LevelUp)
@@ -160,7 +184,6 @@ end
 -- This only deals with trying to keep the MOUNTED flag up to date
 eventHandler["PLAYER_MOUNT_DISPLAY_CHANGED"] = function()
 	if MOUNTED then
-		print("We were dismounted!")
 		playSampleFromCollection(library.mounts["Dismount"])
 
 		if PLAYING_MUSIC then
@@ -192,7 +215,7 @@ function playSample(sample)
 	local cooldown = sample.cooldown or DEFAULT_SAMPLE_COOLDOWN
 
 	if not cooldownTimers[sample] then
-		if DARN_DEBUG then print("Playing sample: "..sample.path) end
+		if DARN_DEBUG then darnPrint("Playing sample: "..sample.path) end
 		cooldownTimers[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
@@ -201,7 +224,7 @@ function playSample(sample)
 			cooldownTimers[sample] = nil
 		end)
 	elseif DARN_DEBUG then
-		print("Sample skipped due to being on cooldown: "
+		darnPrint("Sample skipped due to being on cooldown: "
 		..sample.path
 		.." ("
 		..cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
@@ -224,14 +247,18 @@ function playSampleFromCollection(collection)
 				end)
 			end
 		elseif DARN_DEBUG then
-			print("Sample skipped due to collection being on cooldown: "
+			darnPrint("Sample skipped due to collection being on cooldown: "
 			..sample.path
 			.." ("
 			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
 		end
-	elseif DARN_DEBUG then
-		print("Tried to play from an empty sample collection!")
+	else
+		local msg = ("Tried to play from an empty sample collection!")
+		if DARN_DEBUG then
+			darnPrint(msg)
+		end
+		logMessage(msg, "ERROR")
 	end
 end
 
@@ -240,7 +267,7 @@ function playMusicFromCollection(collection)
 	if collection and (#collection > 0) then
 		local sample = collection[random(1, #collection)]
 		if DARN_DEBUG then
-			print("Playing MountMusic: " .. sample.path)
+			darnPrint("Playing MountMusic: " .. sample.path)
 		end
 
 		PlayMusic(BASE_SOUND_DIRECTORY .. sample.path)
@@ -258,17 +285,20 @@ function playMusicFromCollection(collection)
 				PLAYING_MUSIC = false
 			end
 		end)
-	elseif DARN_DEBUG then
-		print("Tried to play from an empty Mount collection!")
+	else
+		local msg = ("Tried to play from an empty Mount collection!")
+		if DARN_DEBUG then
+			darnPrint(msg)
+		end
+		logMessage(msg, "ERROR")
 	end
 end
 
 
 -- Utilities
-function print(msg)
-	DEFAULT_CHAT_FRAME:AddMessage("Darnellify2:: \n" .. tostring(msg))
+function darnPrint(msg)
+	DEFAULT_CHAT_FRAME:AddMessage(prettyName..":: \n" .. tostring(msg))
 end
-
 
 -- Check if table contains KEY
 function tableContains(t, val)
@@ -281,3 +311,128 @@ function tableContains(t, val)
     end
     return false
 end
+
+-- Push a new message to messages
+function logMessage(msg, msgType)
+	local entry = {
+		type = msgType or "GENERIC",
+		msg = msg,
+		time = date("%H:%M:%S"),
+	}
+
+	table.insert(messages, entry)
+end
+
+
+
+-- SlashCmd handlers
+local slashCommands = {}
+
+slashCommands.events = {
+	func = function(...)
+		print(" ")
+		print(prettyName.." hooked events: ")
+		local modern = ifModern("dummy") and "False" or "True"
+		print("(WoW Classic mode: "..modern..")")
+		for k, v in pairs( eventList ) do
+			print( DarnColors.green .. v )
+		end
+	end,
+
+	desc = "Lists all registered Events"
+}
+
+
+slashCommands.spam = {
+	func = function(...)
+		DARN_DEBUG = not DARN_DEBUG
+		if DARN_DEBUG then
+			print(prettyName..": Verbose errors "..DarnColors.red.."enabled")
+		else
+			print(prettyName..": Verbose errors "..DarnColors.green.."disabled")
+		end
+	end,
+
+	desc = "Makes Darnellify2 very talkative! (Debugging messages)"
+}
+
+slashCommands.messages = {
+	func = function(...)
+		if (...) == "clear" then
+			messages = {}
+			print(prettyName..": Messages cleared!")
+			return
+		end
+
+		if #messages > 0 then
+			print(prettyName..": Dumping "..#messages.." log messages: ")
+			for k, v in ipairs(messages) do
+				if v.type == "WARNING" then
+					print("["..k.."] ("..v.time..") "..DarnColors.yellow..v.msg)
+				elseif v.type == "ERROR" then
+					print("["..k.."] ("..v.time..") "..DarnColors.red..v.msg)
+				else
+					print("["..k.."] ("..v.time..") "..v.msg)
+				end
+			end
+		else
+			print(prettyName..": No log messages!")
+		end
+	end,
+
+	desc = "Show all log messages. Append 'clear' to clear log, 'export' to copy the log to clipboard."
+}
+
+
+-- Misc SlashCmd code
+function slashProcessor(cmd)
+	-- split the recieved slashCmd into a root command plus any extra arguments
+	local parts = {}
+	local root
+
+	for part in string.lower(cmd):gmatch("%S+") do
+		table.insert(parts, part)
+	end
+
+	-- Strip out and store the root command
+	root = parts[1]
+	table.remove(parts, 1)
+
+	-- Utility function to print all available commands
+	local function printCmdList()
+		local slashListSeparator = "      `- "
+		if select("#", slashCommands) > 0 then
+			print(DarnColors.yellow..addonName.." commands:")
+
+			for k, v in pairs(slashCommands) do
+				print(k)
+				if v.desc then
+					print(DarnColors.cyan..slashListSeparator..DarnColors.orange..v.desc)
+				else
+					print(slashListSeparator..DarnColors.red.."No Description")
+				end
+			end
+		end
+	end
+
+
+		-- Check if the root command exists, and call it. Else print error and list available commands + their description (if any)
+	if slashCommands[root] then
+		slashCommands[root].func(unpack(parts))
+	elseif root == nil then
+		print(prettyName..": ["..#messages.."] messages stored.")
+		printCmdList()
+	else
+		print(DarnColors.yellow.."Darnellify".."r| unrecognized command: "..DarnColors.red..root)
+		print("List available commands with "..DarnColors.cyan.."/darn|r or "..DarnColors.cyan.."/darnellify")
+	end
+end
+
+
+SLASH_Darnellify1 = "/Darnell"
+SLASH_Darnellify2 = "/Darnellify"
+SLASH_Darnellify3 = "/Darn"
+SLASH_Darnellify4 = "/Fony"
+SLASH_Darnellify5 = "/MikeB"
+
+SlashCmdList["Darnellify"] = slashProcessor
