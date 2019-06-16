@@ -40,6 +40,14 @@ https://twitch.tv/akamikeb
 
 # Changelog
 
+## [0.5.3] - 2019-06-16
+### Changed
+- A whole lot of restructuring of the internal workings. More close to final now.
+- The sound library structure is now different and hopefully a lot more readable.
+### Added
+- Mount-up and Dismount should be fully working.
+  + Mount categories and spellID's can be added freely without touching main code.
+
 ## [0.5.1] - 2019-06-14
 ### Changed
 - Updated and renamed Readme for GitHub
