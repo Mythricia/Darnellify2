@@ -60,7 +60,7 @@ eventFrame:SetScript("OnEvent", parseEvent)
 -- Using a function here to clean up the event hooking syntax later
 local function ifModern(passthroughEvent)
 	if FAKE_CLASSIC then
-		return false
+		return nil
 	else
 		return (CLIENT_MAJOR_VER > 1 and passthroughEvent) or nil
 	end
