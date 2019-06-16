@@ -42,7 +42,10 @@ local function initialize()
 
 	for k, v in pairs(eventList) do
 		if type(v) == "string" then
-			eventFrame:RegisterEvent(v)
+			-- Duplicate prevention
+			if not eventFrame:IsEventRegistered(v) then
+				eventFrame:RegisterEvent(v)
+			end
 		end
 	end
 end
@@ -77,15 +80,20 @@ eventList =
 	ifModern("GUILDBANKFRAME_CLOSED"),
 	ifModern("VOID_STORAGE_OPEN"),
 	ifModern("VOID_STORAGE_CLOSE"),
-	ifModern("TRANSMOGRIFY_OPEN"),
-	ifModern("TRANSMOGRIFY_CLOSE"),
 	ifModern("ACHIEVEMENT_EARNED"),
 
 	-- Classic-safe events
 	"MAIL_SHOW",
 	"MAIL_CLOSED",
-	"UNIT_SPELLCAST_SUCCEEDED",
+	"AUCTION_HOUSE_SHOW",
+	"AUCTION_HOUSE_CLOSED",
+	"BANKFRAME_OPENED",
+	"BANKFRAME_CLOSED",
+	"MERCHANT_SHOW",
+	"MERCHANT_CLOSED",
+	"PLAYER_LEVEL_UP",
 	"PLAYER_MOUNT_DISPLAY_CHANGED",
+	"UNIT_SPELLCAST_SUCCEEDED",
 }
 
 
@@ -97,13 +105,60 @@ eventHandler["ADDON_LOADED"] = function(event, ...)
 end
 
 
-eventHandler["MAIL_SHOW"] = function(event, ...)
+-- One-liners. Could be solved more efficiently but this allows for easy future extension
+
+-- Interface events
+eventHandler["MAIL_SHOW"] = function()
 	playSampleFromCollection(library.interface.Mailbox_Open)
+end
+eventHandler["MAIL_CLOSED"] = function()
+	playSampleFromCollection(library.interface.Mailbox_Close)
+end
+eventHandler["TRANSMOGRIFY_OPEN"] = function()
+	playSampleFromCollection(library.interface.Transmog_Open)
+end
+eventHandler["TRANSMOGRIFY_CLOSE"] = function()
+	playSampleFromCollection(library.interface.Transmog_Close)
+end
+eventHandler["GUILDBANKFRAME_OPENED"] = function()
+	playSampleFromCollection(library.interface.GuildBank_Open)
+end
+eventHandler["GUILDBANKFRAME_CLOSED"] = function()
+	playSampleFromCollection(library.interface.GuildBank_Close)
+end
+eventHandler["VOID_STORAGE_OPEN"] = function()
+	playSampleFromCollection(library.interface.Void_Open)
+end
+eventHandler["VOID_STORAGE_CLOSE"] = function()
+	playSampleFromCollection(library.interface.Void_Close)
+end
+eventHandler["AUCTION_HOUSE_SHOW"] = function()
+	playSampleFromCollection(library.interface.AH_Open)
+end
+eventHandler["AUCTION_HOUSE_CLOSED"] = function()
+	playSampleFromCollection(library.interface.AH_Close)
+end
+eventHandler["BANKFRAME_OPENED"] = function()
+	playSampleFromCollection(library.interface.Bank_Open)
+end
+eventHandler["BANKFRAME_CLOSED"] = function()	-- THIS FIRES TWICE. For some reason. 🤷
+	playSampleFromCollection(library.interface.Bank_Close)
+end
+eventHandler["MERCHANT_SHOW"] = function()
+	playSampleFromCollection(library.interface.Vendor_Open)
+end
+eventHandler["MERCHANT_CLOSED"] = function()
+	playSampleFromCollection(library.interface.Vendor_Close)
+end
+
+-- Player events (levelup, duel, achievement, etc)
+eventHandler["PLAYER_LEVEL_UP"] = function()
+playSampleFromCollection(library.player.Player_LevelUp)
 end
 
 
 -- This only deals with trying to keep the MOUNTED flag up to date
-eventHandler["PLAYER_MOUNT_DISPLAY_CHANGED"] = function(event, ...)
+eventHandler["PLAYER_MOUNT_DISPLAY_CHANGED"] = function()
 	if MOUNTED then
 		print("We were dismounted!")
 		playSampleFromCollection(library.mounts["Dismount"])
@@ -134,20 +189,22 @@ end
 
 -- Sample playback functions
 function playSample(sample)
+	local cooldown = sample.cooldown or DEFAULT_SAMPLE_COOLDOWN
+
 	if not cooldownTimers[sample] then
 		if DARN_DEBUG then print("Playing sample: "..sample.path) end
 		cooldownTimers[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
 		-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
-		C_Timer.After(sample.cooldown or DEFAULT_SAMPLE_COOLDOWN, function()
+		C_Timer.After(cooldown, function()
 			cooldownTimers[sample] = nil
 		end)
 	elseif DARN_DEBUG then
 		print("Sample skipped due to being on cooldown: "
 		..sample.path
 		.." ("
-		..sample.cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
+		..cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
 		.."s remaining)")
 	end
 end

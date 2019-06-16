@@ -16,7 +16,7 @@ To add another sample to the pool, simply add another line with the new file pat
 An example:
 -----------
 
-	library.interface["Mailbox_Open"] = {
+	["Mailbox_Open"] = {
 		{path = "Interface\\Mail_Open_1.mp3", cooldown = 5},
 		{path = "Interface\\Mail_Open_2.mp3", cooldown = 5},
 		{path = "Interface\\Mail_Open_3.mp3", cooldown = 5},
@@ -43,12 +43,64 @@ The cooldown can be set to 0.
 local library = {}
 
 
--- Interface Panel events (Windows, panels, etc)
-library.interface = {}
-library.interface["Mailbox_Open"] = {
-	{path = "Interface\\Mail_Open.mp3", cooldown = 2},
+-- Interface events (Windows, panels, etc)
+library.interface = {
+	["Mailbox_Open"] = {
+		{path = "Interface\\Mail_Open.mp3"},
+	},
+	["Mailbox_Close"] = {
+		{path = "Interface\\Mail_Close.mp3"},
+	},
 
-	cooldown = 5,
+	["Transmog_Open"] = {
+		{path = "Interface\\Transmog_Open.mp3"},
+	},
+	["Transmog_Close"] = {
+		{path = "Interface\\Transmog_Close.mp3"},
+	},
+
+	["GuildBank_Open"] = {
+		{path = "Interface\\GuildBank_Open.mp3"},
+	},
+	["GuildBank_Close"] = {
+		{path = "Interface\\GuildBank_Close.mp3"},
+	},
+
+	["Void_Open"] = {
+		{path = "Interface\\VoidStorage_Open.mp3"},
+	},
+	["Void_Close"] = {
+		{path = "Interface\\VoidStorage_Close.mp3"},
+	},
+
+	["AH_Open"] = {
+		{path = "Interface\\Auction_House_Open.mp3"},
+	},
+	["AH_Close"] = {
+		{path = "Interface\\Auction_House_Close.mp3"},
+	},
+
+	["Bank_Open"] = {
+		{path = "Interface\\Bank_Open.mp3"},
+	},
+	["Bank_Close"] = {
+		{path = "Interface\\Bank_Close.mp3"},
+	},
+
+	["Vendor_Open"] = {
+		{path = "Interface\\Merchant_Open.mp3"},
+	},
+	["Vendor_Close"] = {
+		{path = "Interface\\Merchant_Close.mp3"},
+	},
+}
+
+
+-- Player events
+library.player = {
+	["Player_LevelUp"] = {
+		{path = "Player\\Player_Level_Up_1.mp3"},
+	},
 }
 
 
