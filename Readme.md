@@ -10,12 +10,6 @@ https://www.wowinterface.com/downloads/info21093-Darnellify.html
 
 -----
 
-NOTE: The sound samples folder ("/Sounds") is NOT INCLUDED on GitHub!  
-For copyright (and Git binary file) reasons, the samples are only included in [releases](https://github.com/Mythricia/Darnellify2/releases).  
-If you want to do dev work on the addon, download the most recent release which includes Sounds, and pull the repo ontop.
-
------
-
 Roadmap (TBD):  
 - [x] Simultaneous Modern & Classic compatibility
 - [x] Easily extendable sound list in separate file
