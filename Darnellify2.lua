@@ -139,7 +139,7 @@ function playSample(sample)
 		cooldownTimers[sample] = GetTime()
 		PlaySoundFile(BASE_SOUND_DIRECTORY .. sample.path)
 
-		-- Schedule the removal of sample cooldown
+		-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
 		C_Timer.After(sample.cooldown or DEFAULT_SAMPLE_COOLDOWN, function()
 			cooldownTimers[sample] = nil
 		end)
@@ -154,7 +154,7 @@ end
 
 
 function playSampleFromCollection(collection)
-	if #collection > 0 then
+	if collection and (#collection > 0) then
 		local sample = collection[random(1, #collection)]
 		if not cooldownTimers[collection] then
 			playSample(sample)
@@ -174,13 +174,13 @@ function playSampleFromCollection(collection)
 			.."s remaining)")
 		end
 	elseif DARN_DEBUG then
-		print("Tried to play from an empty collection!")
+		print("Tried to play from an empty sample collection!")
 	end
 end
 
 
 function playMusicFromCollection(collection)
-	if #collection > 0 then
+	if collection and (#collection > 0) then
 		local sample = collection[random(1, #collection)]
 		if DARN_DEBUG then
 			print("Playing MountMusic: " .. sample.path)
@@ -201,6 +201,8 @@ function playMusicFromCollection(collection)
 				PLAYING_MUSIC = false
 			end
 		end)
+	elseif DARN_DEBUG then
+		print("Tried to play from an empty Mount collection!")
 	end
 end
 
