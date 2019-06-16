@@ -22,6 +22,7 @@ Roadmap (TBD):
 - [x] Sounds split into sensible categories
 - [x] Spam prevention (cooldowns)
 - [x] Configurable per-sound attributes (delay, cooldown)
+  - (only **Cooldown** working for now, delay to be added later)
 - [ ] In-game options GUI to enable/disable sounds
 
 Optional Extras:  
