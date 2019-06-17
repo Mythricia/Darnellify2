@@ -1,0 +1,4 @@
+Missing samples that I've noticed while writing the addon:
+
+
+* "Out of / Not enough Maelstrom"	(I guess maelstrom wasn't a thing back then)
