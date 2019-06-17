@@ -215,6 +215,7 @@ end
 local ErrorMessageMap = {
 	-- generic errors
 	[ERR_GENERIC_NO_TARGET] = library.error.GenericNoTarget,
+	["There is nothing to attack."] = library.error.GenericNoTarget,
 	[ERR_GENERIC_STUNNED]	= library.error.GenericStunned,
 	[ERR_CLIENT_LOCKED_OUT] = library.error.GenericLockout,
 	
