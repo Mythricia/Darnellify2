@@ -73,7 +73,7 @@ end
 
 local function parseEvent(frame, event, ...)
 	if eventHandler[event] then
-		eventHandler[event](event, ...)
+		eventHandler[event](...)
 	else
 		local msg = ("Event registered but not handled: \""..event.."\"")
 		if DARN_DEBUG then
@@ -119,11 +119,14 @@ eventList =
 	"PLAYER_LEVEL_UP",
 	"PLAYER_MOUNT_DISPLAY_CHANGED",
 	"UNIT_SPELLCAST_SUCCEEDED",
+	"DUEL_REQUESTED",
+	"UI_INFO_MESSAGE",
+	"UI_ERROR_MESSAGE",
 }
 
 
 -- Event handlers
-eventHandler["ADDON_LOADED"] = function(event, ...)
+eventHandler["ADDON_LOADED"] = function(...)
 	if ... == addonName then
 		initialize()
 	end
@@ -180,6 +183,40 @@ eventHandler["PLAYER_LEVEL_UP"] = function()
 playSampleFromCollection(library.player.Player_LevelUp)
 end
 
+eventHandler["DUEL_REQUESTED"] = function()
+	playSampleFromCollection(library.player.DuelRequested)
+end
+
+
+-- Note: Some of the global info message strings (ERR_PVP_TOGGLE_OFF etc) are wrong,
+-- and don't actually reflect the real info text that is displays. Double check if not working.
+-- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
+local InfoMessageMap = {
+	[ERR_DUEL_CANCELLED] = library.player.DuelCancelled,
+}
+
+eventHandler["UI_INFO_MESSAGE"] = function(messageType, message)
+	local mappedMessage = InfoMessageMap[message]
+	if mappedMessage then
+		playSampleFromCollection(mappedMessage)
+	end
+end
+
+
+
+-- Note: Like UI_INFO_MESSAGE events, these globals sometimes don't match the actual error messages
+-- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
+local ErrorMessageMap = {
+	[ERR_GENERIC_NO_TARGET] = library.error.GenericNoTarget,
+}
+
+eventHandler["UI_ERROR_MESSAGE"] = function(messageType, message)
+	local mappedMessage = ErrorMessageMap[message]
+	if mappedMessage then
+		playSampleFromCollection(mappedMessage)
+	end
+end
+
 
 -- This only deals with trying to keep the MOUNTED flag up to date
 eventHandler["PLAYER_MOUNT_DISPLAY_CHANGED"] = function()
@@ -198,7 +235,7 @@ end
 
 
 -- If we mounted up, play the correct music for the mount, if any
-eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(event, target, GUID, spellID)
+eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(target, GUID, spellID)
 	if target == "player" then
 		for name, category in pairs(library.mounts) do
 			if tableContains(category.mounts, spellID) then

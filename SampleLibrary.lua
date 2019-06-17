@@ -24,6 +24,8 @@ An example:
 		{path = "Interface\\Mail_Open_5.mp3", cooldown = 5},
 
 		cooldown = 1,
+		-- TODO: add delay attribute
+		-- TODO: We could have a reset attribute, containing a string array of conditional cd resets ("target" etc)
 	}
 
 
@@ -101,6 +103,25 @@ library.player = {
 	["Player_LevelUp"] = {
 		{path = "Player\\Player_Level_Up_1.mp3"},
 	},
+
+	["DuelRequested"] = {
+		{path = "Player\\You_Have_Requested_A_Duel.mp3"},
+	},
+	["DuelCancelled"] = {
+		{path = "Player\\Duel_Cancelled.mp3"},
+	}
+}
+
+
+-- Error message events ("Too far away" etc)
+library.error = {
+	["GenericNoTarget"] = {
+		{path = "Error\\You_Have_No_Target.mp3", cooldown = 3},
+	},
+
+	["TooFarAway"] = {
+		{path = "Error\\You_Are_Too_Far_Away.mp3", cooldown = 3},
+	}
 }
 
 
