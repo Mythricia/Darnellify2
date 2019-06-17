@@ -189,7 +189,7 @@ end
 
 
 -- Note: Some of the global info message strings (ERR_PVP_TOGGLE_OFF etc) are wrong,
--- and don't actually reflect the real info text that is displays. Double check if not working.
+-- and don't actually reflect the real info text that is displays. Add string mapping to fix
 -- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
 local InfoMessageMap = {
 	[ERR_DUEL_CANCELLED] = library.player.DuelCancelled,
@@ -207,10 +207,40 @@ end
 -- Note: Like UI_INFO_MESSAGE events, these globals sometimes don't match the actual error messages
 -- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
 local ErrorMessageMap = {
+	-- target errors
 	[ERR_GENERIC_NO_TARGET] = library.error.GenericNoTarget,
+
+	-- range errors
+	[ERR_BADATTACKPOS] 		= library.error.TooFarAway,
+	[ERR_LOOT_TOO_FAR] 		= library.error.TooFarAway,
+	[ERR_NO_BANK_HERE] 		= library.error.TooFarAway,
+	[ERR_TAXITOOFARAWAY] 	= library.error.TooFarAway,
+	[ERR_USE_TOO_FAR] 		= library.error.TooFarAway,
+	[ERR_VENDOR_TOO_FAR] 	= library.error.TooFarAway,
+	[ERR_TOO_FAR_TO_INTERACT]=library.error.GetCloser,
+	[ERR_OUT_OF_RANGE]		= library.error.OutOfRange,
+	[ERR_SPELL_OUT_OF_RANGE]= library.error.OutOfRange,
+
+	-- control state errors
+	[ERR_ATTACK_STUNNED]	= library.error.CantAttack_Stunned,
+	[ERR_ATTACK_PACIFIED]	= library.error.CantAttack_Pacified,
+	[ERR_ATTACK_FLEEING]	= library.error.CantAttack_Fleeing,
+	[ERR_ATTACK_DEAD]		= library.error.CantAttack_Dead,
+	[ERR_ATTACK_CONFUSED]	= library.error.CantAttack_Confused,
+	[ERR_ATTACK_CHARMED]	= library.error.CantAttack_Charmed,
+
+	-- resource errors
+	[ERR_OUT_OF_RAGE]		= library.error.NotEnough_Rage,
+	[ERR_OUT_OF_MANA]		= library.error.NotEnough_Mana,
+	[ERR_OUT_OF_HEALTH]		= library.error.NotEnough_Health,
+	[ERR_OUT_OF_FOCUS]		= library.error.NotEnough_Focus,
+	[ERR_OUT_OF_ENERGY]		= library.error.NotEnough_Energy,
+	--[ERR_OUT_OF_MAELSTROM] = todo
+	--[ERR_OUT_OF_FURY] = todo
 }
 
 eventHandler["UI_ERROR_MESSAGE"] = function(messageType, message)
+	print(message)
 	local mappedMessage = ErrorMessageMap[message]
 	if mappedMessage then
 		playSampleFromCollection(mappedMessage)

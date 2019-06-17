@@ -1,4 +1,5 @@
 Missing samples that I've noticed while writing the addon:
 
 
-* "Out of / Not enough Maelstrom"	(I guess maelstrom wasn't a thing back then)
+* "Out of / Not enough Maelstrom"	For Elem & Enh Shaman specs
+* "Out of / Not enough Fury"		For both Demon Hunter specs

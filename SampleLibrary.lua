@@ -121,7 +121,50 @@ library.error = {
 
 	["TooFarAway"] = {
 		{path = "Error\\You_Are_Too_Far_Away.mp3", cooldown = 3},
-	}
+	},
+	["GetCloser"] = {
+		{path = "Error\\You_Need_To_Be_Closer_To_Interact_With_That_Target.mp3", cooldown = 10},
+	},
+	["OutOfRange"] = {
+		{path = "Error\\Out_Of_Range.mp3", cooldown = 5},
+	},
+
+
+	["CantAttack_Stunned"] = {
+		{path = "Error\\Cant_Attack_While_Stunned.mp3", cooldown = 3},
+	},
+	["CantAttack_Pacified"] = {
+		{path = "Error\\Cant_Attack_While_Pacified.mp3", cooldown = 3},
+	},
+	["CantAttack_Fleeing"] = {
+		{path = "Error\\Cant_Attack_While_Fleeing.mp3", cooldown = 3},
+	},
+	["CantAttack_Dead"] = {
+		{path = "Error\\Cant_Attack_While_Dead.mp3", cooldown = 3},
+	},
+	["CantAttack_Confused"] = {
+		{path = "Error\\Cant_Attack_While_Confused.mp3", cooldown = 3},
+	},
+	["CantAttack_Charmed"] = {
+		{path = "Error\\Cant_Attack_While_Charmed.mp3", cooldown = 3},
+	},
+
+
+	["NotEnough_Rage"] = {
+		{path = "Error\\Not_Enough_Rage.mp3", cooldown = 5},
+	},
+	["NotEnough_Mana"] = {
+		{path = "Error\\Not_Enough_Mana.mp3", cooldown = 5},
+	},
+	["NotEnough_Health"] = {
+		{path = "Error\\Not_Enough_Health.mp3", cooldown = 5},
+	},
+	["NotEnough_Focus"] = {
+		{path = "Error\\Not_Enough_Focus.mp3", cooldown = 5},
+	},
+	["NotEnough_Energy"] = {
+		{path = "Error\\Not_Enough_Energy.mp3", cooldown = 5},
+	},
 }
 
 
