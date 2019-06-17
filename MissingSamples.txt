@@ -3,3 +3,6 @@ Missing samples that I've noticed while writing the addon:
 
 * "Out of / Not enough Maelstrom"	For Elem & Enh Shaman specs
 * "Out of / Not enough Fury"		For both Demon Hunter specs
+* "Can't do that / Can't attack while Frozen"
+* "Can't do that / Can't attack while disoriented"
+* "Can't do that / Can't attack while polymorphed"
