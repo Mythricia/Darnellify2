@@ -183,7 +183,7 @@ eventHandler["PLAYER_LEVEL_UP"] = function()
 playSampleFromCollection(library.player.Player_LevelUp)
 end
 
-eventHandler["DUEL_REQUESTED"] = function()
+eventHandler["DUEL_REQUESTED"] = function() -- player RECIEVED a duel request
 	playSampleFromCollection(library.player.DuelRequested)
 end
 
@@ -192,10 +192,16 @@ end
 -- and don't actually reflect the real info text that is displays. Add string mapping to fix
 -- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
 local InfoMessageMap = {
-	[ERR_DUEL_CANCELLED] = library.player.DuelCancelled,
+	[ERR_DUEL_REQUESTED] 	= library.info.DuelRequested, -- player SENT a duel request
+	[ERR_DUEL_CANCELLED] 	= library.info.DuelCancelled,
+	[ERR_PVP_TOGGLE_ON]		= library.info.PVP_On,
+	[ERR_PVP_TOGGLE_OFF]	= library.info.PVP_Off,
+
+	[ERR_FISH_NOT_HOOKED]	= library.info.Fishing_NotHooked,
 }
 
 eventHandler["UI_INFO_MESSAGE"] = function(messageType, message)
+	print("Info: " .. message)
 	local mappedMessage = InfoMessageMap[message]
 	if mappedMessage then
 		playSampleFromCollection(mappedMessage)
@@ -207,19 +213,26 @@ end
 -- Note: Like UI_INFO_MESSAGE events, these globals sometimes don't match the actual error messages
 -- REMEMBER TO RESOLVE THE KEYS AS STRINGS with [ ]
 local ErrorMessageMap = {
-	-- target errors
+	-- generic errors
 	[ERR_GENERIC_NO_TARGET] = library.error.GenericNoTarget,
-
-	-- range errors
+	[ERR_GENERIC_STUNNED]	= library.error.GenericStunned,
+	[ERR_CLIENT_LOCKED_OUT] = library.error.GenericLockout,
+	
+	-- targeting / range errors
 	[ERR_BADATTACKPOS] 		= library.error.TooFarAway,
 	[ERR_LOOT_TOO_FAR] 		= library.error.TooFarAway,
 	[ERR_NO_BANK_HERE] 		= library.error.TooFarAway,
 	[ERR_TAXITOOFARAWAY] 	= library.error.TooFarAway,
 	[ERR_USE_TOO_FAR] 		= library.error.TooFarAway,
 	[ERR_VENDOR_TOO_FAR] 	= library.error.TooFarAway,
+	[ERR_AUTOFOLLOW_TOO_FAR] = library.error.TooFarAway,
 	[ERR_TOO_FAR_TO_INTERACT]=library.error.GetCloser,
 	[ERR_OUT_OF_RANGE]		= library.error.OutOfRange,
 	[ERR_SPELL_OUT_OF_RANGE]= library.error.OutOfRange,
+	["Target needs to be in front of you."] = library.error.FacingWrongWay,
+	-- ^ ^ ^ Blizzards "ERR_BADATTACKFACING" string is outdated and not equal to the actual message
+	[ERR_INVALID_ATTACK_TARGET]=library.error.InvalidTarget,
+	["Invalid target"] = library.error.InvalidTarget,
 
 	-- control state errors
 	[ERR_ATTACK_STUNNED]	= library.error.CantAttack_Stunned,
@@ -228,6 +241,8 @@ local ErrorMessageMap = {
 	[ERR_ATTACK_DEAD]		= library.error.CantAttack_Dead,
 	[ERR_ATTACK_CONFUSED]	= library.error.CantAttack_Confused,
 	[ERR_ATTACK_CHARMED]	= library.error.CantAttack_Charmed,
+	-- disoriented = todo / investigate?
+	-- frozen = todo / investigate?
 
 	-- resource errors
 	[ERR_OUT_OF_RAGE]		= library.error.NotEnough_Rage,
@@ -237,10 +252,33 @@ local ErrorMessageMap = {
 	[ERR_OUT_OF_ENERGY]		= library.error.NotEnough_Energy,
 	--[ERR_OUT_OF_MAELSTROM] = todo
 	--[ERR_OUT_OF_FURY] = todo
+
+	-- item errors
+	[ERR_ITEM_COOLDOWN]		= library.error.Item_Cooldown,
+	[ERR_ITEM_LOCKED]		= library.error.Item_Locked,
+	[ERR_CANT_USE_ITEM]		= library.error.Item_CannotUse,
+	[ERR_OBJECT_IS_BUSY]	= library.error.ObjectBusy,
+	[ERR_CHEST_IN_USE]		= library.error.ChestInUse,
+
+	-- interaction errors
+	[ERR_ALREADY_TRADING]	= library.error.AlreadyTrading,
+	[ERR_CHAT_WHILE_DEAD]	= library.error.CantChatWhileDead,
+
+	-- spell / ability errors
+	[SPELL_FAILED_CASTER_AURASTATE]	= library.error.CantDoThatYet,
+	[SPELL_FAILED_MOVING]			= library.error.CantWhileMoving,
+	[SPELL_FAILED_BAD_TARGETS]		= library.error.InvalidTarget,
+	[ERR_SPELL_COOLDOWN]			= library.error.SpellCooldown,
+	[ERR_ABILITY_COOLDOWN]			= library.error.AbilityCooldown,
+
+	-- fishing...
+	[ERR_FISH_ESCAPED]			= library.error.Fishing_Escaped,
+	[SPELL_FAILED_TOO_SHALLOW]	= library.error.Fishing_TooShallow,
+	[SPELL_FAILED_NOT_FISHABLE]	= library.error.Fishing_NotFishable,
 }
 
 eventHandler["UI_ERROR_MESSAGE"] = function(messageType, message)
-	print(message)
+	print("Error: " .. message)
 	local mappedMessage = ErrorMessageMap[message]
 	if mappedMessage then
 		playSampleFromCollection(mappedMessage)

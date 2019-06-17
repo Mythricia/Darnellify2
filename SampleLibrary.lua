@@ -103,22 +103,46 @@ library.player = {
 	["Player_LevelUp"] = {
 		{path = "Player\\Player_Level_Up_1.mp3"},
 	},
-
-	["DuelRequested"] = {
-		{path = "Player\\You_Have_Requested_A_Duel.mp3"},
-	},
-	["DuelCancelled"] = {
-		{path = "Player\\Duel_Cancelled.mp3"},
-	}
 }
 
+-- Info messages ("PVP combat toggled on" etc)
+library.info = {
+	["PVP_On"] = {
+		{path = "Info\\PvP_On.mp3", cooldown = 5},
+	},
+	["PVP_Off"] = {
+		{path = "Info\\PvP_Off.mp3", cooldown = 5},
+	},
+
+
+	["DuelRequested"] = {
+		{path = "info\\You_Have_Requested_A_Duel.mp3"},
+	},
+	["DuelCancelled"] = {
+		{path = "info\\Duel_Cancelled.mp3"},
+	},
+
+
+	["Fishing_NotHooked"] = {
+		{path = "Error\\No_Fish_Are_Hooked.mp3"},
+	},
+}
 
 -- Error message events ("Too far away" etc)
 library.error = {
+	-- generic errors
 	["GenericNoTarget"] = {
 		{path = "Error\\You_Have_No_Target.mp3", cooldown = 3},
 	},
+	["GenericStunned"] = -- "Can't do that while stunned", different from "Can't attack while stunned"
+	{
+		{path = "Error\\You_Are_Stunned.mp3", cooldown = 3},
+	},
+	["GenericLockout"] = {
+		{path = "Error\\You_Cant_Do_That_Right_Now.mp3", cooldown = 5},
+	},
 
+	-- range / targeting errors
 	["TooFarAway"] = {
 		{path = "Error\\You_Are_Too_Far_Away.mp3", cooldown = 3},
 	},
@@ -128,8 +152,14 @@ library.error = {
 	["OutOfRange"] = {
 		{path = "Error\\Out_Of_Range.mp3", cooldown = 5},
 	},
+	["FacingWrongWay"] = {
+		{path = "Error\\You_Are_Facing_The_Wrong_Way.mp3", cooldown = 2},
+	},
+	["InvalidTarget"] = {
+		{path = "Error\\Invalid_Target.mp3"},
+	},
 
-
+	-- loss of control errors
 	["CantAttack_Stunned"] = {
 		{path = "Error\\Cant_Attack_While_Stunned.mp3", cooldown = 3},
 	},
@@ -149,7 +179,7 @@ library.error = {
 		{path = "Error\\Cant_Attack_While_Charmed.mp3", cooldown = 3},
 	},
 
-
+	-- lacking resources errors
 	["NotEnough_Rage"] = {
 		{path = "Error\\Not_Enough_Rage.mp3", cooldown = 5},
 	},
@@ -164,6 +194,56 @@ library.error = {
 	},
 	["NotEnough_Energy"] = {
 		{path = "Error\\Not_Enough_Energy.mp3", cooldown = 5},
+	},
+
+	-- item errors
+	["Item_Cooldown"] = {
+		{path = "Error\\Item_Is_Not_Ready_Yet.mp3", cooldown = 5},
+	},
+	["Item_Locked"] = {
+		{path = "Error\\Item_Is_Locked.mp3", cooldown = 5},
+	},
+	["Item_CannotUse"] = {
+		{path = "Error\\You_Cant_Use_That_Item.mp3", cooldown = 5},
+	},
+	["ObjectBusy"] = {
+		{path = "Error\\That_Object_Is_Busy.mp3", cooldown = 5},
+	},
+	["ChestInUse"] = {
+		{path = "Error\\That_Is_Already_Being_Used.mp3", cooldown = 5},
+	},
+
+	-- player interaction errors
+	["AlreadyTrading"] = {
+		{path = "Error\\You_Are_Already_Trading.mp3", cooldown = 5},
+	},
+	["CantChatWhileDead"] = {
+		{path = "Error\\You_Cant_Chat_When_YouRe_Dead.mp3", cooldown = 5},
+	},
+
+	-- spell / ability errors
+	["CantWhileMoving"] = {
+		{path = "Error\\Cant_Do_That_While_Moving.mp3", cooldown = 5},
+	},
+	["CantDoThatYet"] = {
+		{path = "Error\\You_Cant_Do_That_Yet.mp3", cooldown = 5},
+	},
+	["SpellCooldown"] = {
+		{path = "Error\\Spell_Is_Not_Ready_Yet.mp3", cooldown = 5},
+	},
+	["AbilityCooldown"] = {
+		{path = "Error\\Ability_Is_Not_Ready_Yet.mp3", cooldown = 5},
+	},
+
+	-- fishing...
+	["Fishing_Escaped"] = {
+		{path = "Error\\Your_Fish_Got_Away.mp3"},
+	},
+	["Fishing_TooShallow"] = {
+		{path = "Error\\Water_Too_Shallow.mp3", cooldown = 3},
+	},
+	["Fishing_NotFishable"] = {
+		{path = "Error\\Your_Cast_Didnt_Land_In_Fishable_Water.mp3", cooldown = 12},
 	},
 }
 
