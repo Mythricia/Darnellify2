@@ -1,8 +1,12 @@
 Missing samples that I've noticed while writing the addon:
 
+* "There is nothing to attach" - weirdly, yet another variant of "no target". not sure what the global err_str is
 
 * "Out of / Not enough Maelstrom"	For Elem & Enh Shaman specs
 * "Out of / Not enough Fury"		For both Demon Hunter specs
 * "Can't do that / Can't attack while Frozen"
 * "Can't do that / Can't attack while disoriented"
 * "Can't do that / Can't attack while polymorphed"
+
+Suggestions:
+* Discovered: new zone / area
