@@ -253,9 +253,11 @@ library.combat = {
 		{path = "Combat\\Insult_1.mp3"},
 		{path = "Combat\\Insult_2.mp3"},
 		{path = "Combat\\Insult_3.mp3"},
+
+		cooldown = 5,
 	},
 
-	
+
 }
 
 
