@@ -13,4 +13,5 @@ for /f %%i in ('git tag --sort=v:refname') do set TAG=%%i
 REM Remove any existing zip of this version
 del /Q Builds\Darnellify2_%TAG%.zip
 
-7z a -tzip Builds\Darnellify2_%TAG%.zip -r *.lua Readme.txt Darnellify2.toc Sounds\
+cd ..
+7z a -tzip Darnellify2\Builds\Darnellify2_%TAG%.zip -r Darnellify2\*.lua Darnellify2\Readme.txt Darnellify2\Darnellify2.toc Darnellify2\Sounds\
