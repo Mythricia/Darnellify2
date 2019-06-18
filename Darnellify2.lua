@@ -6,7 +6,7 @@ local settings
 local CLIENT_MAJOR_VER = tonumber(GetBuildInfo():sub(1,1))
 local BASE_SOUND_DIRECTORY = "Interface\\AddOns\\Darnellify2\\Sounds\\"
 local DEFAULT_SAMPLE_COOLDOWN = 1
-local DARN_DEBUG = true
+local DARN_DEBUG = false
 local FAKE_CLASSIC = false
 local MOUNTED = IsMounted()
 local PLAYING_MUSIC = false
@@ -131,7 +131,7 @@ eventList =
 -- Hooking DoEmote to play our own samples
 hooksecurefunc("DoEmote", function(emote, message)
 	if library.emotes[emote] then
-		playSampleFromCollection(library.emotes[emote])
+		playSampleFromCollection(library.emotes[emote], "DoEmote["..emote.."]")
 	end
 end)
 
@@ -145,59 +145,59 @@ end
 
 -- Interface events
 eventHandler["MAIL_SHOW"] = function()
-	playSampleFromCollection(library.interface.Mailbox_Open)
+	playSampleFromCollection(library.interface.Mailbox_Open, "Mailbox_Open")
 end
 eventHandler["MAIL_CLOSED"] = function()
-	playSampleFromCollection(library.interface.Mailbox_Close)
+	playSampleFromCollection(library.interface.Mailbox_Close, "Mailbox_Close")
 end
 eventHandler["TRANSMOGRIFY_OPEN"] = function()
-	playSampleFromCollection(library.interface.Transmog_Open)
+	playSampleFromCollection(library.interface.Transmog_Open, "Transmog_Open")
 end
 eventHandler["TRANSMOGRIFY_CLOSE"] = function()
-	playSampleFromCollection(library.interface.Transmog_Close)
+	playSampleFromCollection(library.interface.Transmog_Close, "Transmog_Close")
 end
 eventHandler["GUILDBANKFRAME_OPENED"] = function()
-	playSampleFromCollection(library.interface.GuildBank_Open)
+	playSampleFromCollection(library.interface.GuildBank_Open, "GuildBank_Open")
 end
 eventHandler["GUILDBANKFRAME_CLOSED"] = function()
-	playSampleFromCollection(library.interface.GuildBank_Close)
+	playSampleFromCollection(library.interface.GuildBank_Close, "GuildBank_Close")
 end
 eventHandler["VOID_STORAGE_OPEN"] = function()
-	playSampleFromCollection(library.interface.Void_Open)
+	playSampleFromCollection(library.interface.Void_Open, "Void_Open")
 end
 eventHandler["VOID_STORAGE_CLOSE"] = function()
-	playSampleFromCollection(library.interface.Void_Close)
+	playSampleFromCollection(library.interface.Void_Close, "Void_Close")
 end
 eventHandler["AUCTION_HOUSE_SHOW"] = function()
-	playSampleFromCollection(library.interface.AH_Open)
+	playSampleFromCollection(library.interface.AH_Open, "AH_Open")
 end
 eventHandler["AUCTION_HOUSE_CLOSED"] = function()
-	playSampleFromCollection(library.interface.AH_Close)
+	playSampleFromCollection(library.interface.AH_Close, "AH_Close")
 end
 eventHandler["BANKFRAME_OPENED"] = function()
-	playSampleFromCollection(library.interface.Bank_Open)
+	playSampleFromCollection(library.interface.Bank_Open, "Bank_Open")
 end
 eventHandler["BANKFRAME_CLOSED"] = function()	-- THIS FIRES TWICE. For some reason. 🤷
-	playSampleFromCollection(library.interface.Bank_Close)
+	playSampleFromCollection(library.interface.Bank_Close, "Bank_Close")
 end
 eventHandler["MERCHANT_SHOW"] = function()
-	playSampleFromCollection(library.interface.Vendor_Open)
+	playSampleFromCollection(library.interface.Vendor_Open, "Vendor_Open")
 end
 eventHandler["MERCHANT_CLOSED"] = function()
-	playSampleFromCollection(library.interface.Vendor_Close)
+	playSampleFromCollection(library.interface.Vendor_Close, "Vendor_Close")
 end
 
 
 -- Player events (levelup, duel, achievement, etc)
 eventHandler["PLAYER_LEVEL_UP"] = function()
-playSampleFromCollection(library.player.Player_LevelUp)
+playSampleFromCollection(library.player.Player_LevelUp, "Player_LevelUp")
 end
 eventHandler["ACHIEVEMENT_EARNED"] = function()
-	playSampleFromCollection(library.player.Player_LevelUp)
+	playSampleFromCollection(library.player.Player_LevelUp, "Player_LevelUp")
 end
 
 eventHandler["DUEL_REQUESTED"] = function() -- player RECIEVED a duel request
-	playSampleFromCollection(library.player.DuelRequested)
+	playSampleFromCollection(library.player.DuelRequested, "DuelRequested")
 end
 
 
@@ -216,7 +216,7 @@ local InfoMessageMap = {
 eventHandler["UI_INFO_MESSAGE"] = function(messageType, message)
 	local mappedMessage = InfoMessageMap[message]
 	if mappedMessage then
-		playSampleFromCollection(mappedMessage)
+		playSampleFromCollection(mappedMessage, "UI_INFO_MESSAGE["..messageType.."]")
 	end
 end
 
@@ -293,7 +293,7 @@ local ErrorMessageMap = {
 eventHandler["UI_ERROR_MESSAGE"] = function(messageType, message)
 	local mappedMessage = ErrorMessageMap[message]
 	if mappedMessage then
-		playSampleFromCollection(mappedMessage)
+		playSampleFromCollection(mappedMessage, "UI_ERROR_MESSAGE["..messageType.."]")
 	end
 end
 
@@ -301,7 +301,7 @@ end
 -- This only deals with trying to keep the MOUNTED flag up to date
 eventHandler["PLAYER_MOUNT_DISPLAY_CHANGED"] = function()
 	if MOUNTED then
-		playSampleFromCollection(library.mounts["Dismount"])
+		playSampleFromCollection(library.mounts["Dismount"], "Dismount")
 
 		if PLAYING_MUSIC then
 			StopMusic()
@@ -319,7 +319,7 @@ eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(target, GUID, spellID)
 	if target == "player" then
 		for name, category in pairs(library.mounts) do
 			if tableContains(category.mounts, spellID) then
-				playMusicFromCollection(category.music)
+				playMusicFromCollection(category.music, "mounts[\""..name.."\"]")
 				return
 			end
 		end
@@ -361,18 +361,18 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 		overkill = logParams[16]
 
 		if (critical and (overkill == -1)) then
-			playSampleFromCollection(library.combat.CriticalHit)
+			playSampleFromCollection(library.combat.CriticalHit, "CriticalHit")
 		elseif (critical and (overkill > 0) and (UnitHealthMax("target") > 1)) then
-			playSampleFromCollection(library.combat.CriticalKill)
+			playSampleFromCollection(library.combat.CriticalKill, "CriticalKill")
 		end
 	elseif (eventType == "SWING_DAMAGE") then
 		critical = logParams[18]
 		overkill = logParams[13]
 
 		if (critical and (overkill == -1)) then
-			playSampleFromCollection(library.combat.CriticalHit)
+			playSampleFromCollection(library.combat.CriticalHit, "CriticalHit")
 		elseif (critical and (overkill > 0) and (UnitHealthMax("target") > 1)) then
-			playSampleFromCollection(library.combat.CriticalKill)
+			playSampleFromCollection(library.combat.CriticalKill, "CriticalKill")
 		end
 	end
 
@@ -383,7 +383,7 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 		local deadOrGhost = UnitIsDeadOrGhost("player")
 
 		if (destName == playerName) and ((curHP < 2) or deadOrGhost) then
-			playSampleFromCollection(library.combat.EnvironmentDeath)
+			playSampleFromCollection(library.combat.EnvironmentDeath, "EnvironmentDeath")
 		end
 		return
 	end
@@ -421,7 +421,7 @@ function playSample(sample)
 end
 
 
-function playSampleFromCollection(collection)
+function playSampleFromCollection(collection, tag)
 	if collection and (#collection > 0) then
 		local sample = collection[random(1, #collection)]
 		if not cooldownTimers[collection] then
@@ -446,7 +446,7 @@ function playSampleFromCollection(collection)
 			.."s remaining)")
 		end
 	else
-		local msg = ("Tried to play from an empty sample collection!")
+		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "UNDEFINED"))
 		if DARN_DEBUG then
 			darnPrint(msg)
 		end
@@ -455,7 +455,7 @@ function playSampleFromCollection(collection)
 end
 
 
-function playMusicFromCollection(collection)
+function playMusicFromCollection(collection, tag)
 	if collection and (#collection > 0) then
 		local sample = collection[random(1, #collection)]
 		if DARN_DEBUG then
@@ -478,7 +478,7 @@ function playMusicFromCollection(collection)
 			end
 		end)
 	else
-		local msg = ("Tried to play from an empty Mount collection!")
+		local msg = ("Tried to play from an empty Mount collection! -> "..(tag or "UNDEFINED"))
 		if DARN_DEBUG then
 			darnPrint(msg)
 		end
@@ -513,6 +513,7 @@ function logMessage(msg, msgType)
 	}
 
 	table.insert(messages, entry)
+	print(prettyName..": Logged "..msgType.." message. See "..DarnColors.orange.."/darn messages|r. ["..#messages.."]")
 end
 
 
@@ -552,7 +553,7 @@ slashCommands.shutup = slashCommands.spam -- alias for .spam
 
 slashCommands.messages = {
 	func = function(...)
-		if (...) == "clear" then
+		if ... == "clear" then
 			messages = {}
 			print(prettyName..": Messages cleared!")
 			return
@@ -569,12 +570,13 @@ slashCommands.messages = {
 					print("["..k.."] ("..v.time..") "..v.msg)
 				end
 			end
+			print(prettyName..": clear message log with "..DarnColors.orange.."/darn messages clear")
 		else
 			print(prettyName..": No log messages!")
 		end
 	end,
 
-	desc = "Show all log messages. Use '/darn messages clear' to clear log"
+	desc = "Show all log messages. Use "..DarnColors.orange.."/darn messages clear|r to clear log"
 }
 
 
@@ -653,7 +655,6 @@ local function darnError(errorMessage)
 		"%q|r", file, line, err)
 
 		logMessage(errStr, "ERROR")
-		print(DarnColors.yellow..addonName.."|r: Captured a Lua error. See /darn messages. ["..#messages.."]")
 		return
 	end
 
