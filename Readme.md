@@ -14,6 +14,7 @@ Roadmap (TBD):
 - [x] Simultaneous Modern & Classic compatibility
 - [x] Easily extendable sound list in separate file
 - [x] Sounds split into sensible categories
+- [ ] Separate config profiles for world/dungeon/raid environments that apply automatically
 - [x] Spam prevention (cooldowns)
 - [x] Configurable per-sound attributes (delay, cooldown)
   - (only **Cooldown** working for now, delay to be added later)
