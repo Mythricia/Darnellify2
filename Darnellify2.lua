@@ -201,7 +201,6 @@ local InfoMessageMap = {
 }
 
 eventHandler["UI_INFO_MESSAGE"] = function(messageType, message)
-	print("Info: " .. message)
 	local mappedMessage = InfoMessageMap[message]
 	if mappedMessage then
 		playSampleFromCollection(mappedMessage)
@@ -279,7 +278,6 @@ local ErrorMessageMap = {
 }
 
 eventHandler["UI_ERROR_MESSAGE"] = function(messageType, message)
-	print("Error: " .. message)
 	local mappedMessage = ErrorMessageMap[message]
 	if mappedMessage then
 		playSampleFromCollection(mappedMessage)
