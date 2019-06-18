@@ -247,6 +247,17 @@ library.error = {
 	},
 }
 
+-- combat events, such as critical strikes, overkills, environmental damage etc
+library.combat = {
+	["EnvironmentDeath"] = {
+		{path = "Combat\\Insult_1.mp3"},
+		{path = "Combat\\Insult_2.mp3"},
+		{path = "Combat\\Insult_3.mp3"},
+	},
+
+	
+}
+
 
 -- Mount events.
 library.mounts = {}

@@ -122,6 +122,8 @@ eventList =
 	"DUEL_REQUESTED",
 	"UI_INFO_MESSAGE",
 	"UI_ERROR_MESSAGE",
+
+	"COMBAT_LOG_EVENT_UNFILTERED",
 }
 
 
@@ -312,6 +314,62 @@ eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(target, GUID, spellID)
 		end
 	end
 end
+
+
+-- Combat related events handled here, such as crit, crit-kill, fall death, etc
+-- NOTE: This event no longer carries a payload by itself, must use CombatLogGetCurrentEventInfo() to fetch them
+eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
+	local logParams = {CombatLogGetCurrentEventInfo()}
+	local charName = UnitName("player")
+
+	-- [1] = timeStamp,
+	-- [2] = eventType,
+	-- [3] = hideCaster,
+	-- [4] = sourceGUID,
+	-- [5] = sourceName,
+	-- [6] = sourceFlags,
+	-- [7] = sourceRaidFlags,
+	-- [8] = destGUID,
+	-- [9] = destName,
+	-- [10]= destFlags,
+	-- [11]= destRaidFlags,
+	-- remaining params depend on eventType, see: https://wow.gamepedia.com/COMBAT_LOG_EVENT
+
+    local eventType = logParams[2]
+    local sourceName = logParams[5]
+	local destName = logParams[9]
+	
+	-- Only care about overkill and critical currently, map params accordingly
+	local critical
+	local overkill
+
+	if (eventType == "SPELL_DAMAGE")
+	or (eventType == "SPELL_PERIODIC_DAMAGE")
+	or (eventType == "RANGE_DAMAGE") then
+		critical = logParams[21]
+		overkill = logParams[16]
+	elseif (eventType == "SWING_DAMAGE") then
+		critical = logParams[18]
+		overkill = logParams[13]
+	end
+
+
+	-- Check for death from environmental damage (fall, drown, lava, etc)
+	if eventType == "ENVIRONMENTAL_DAMAGE" then
+		local amount = logParams[13]
+		local curHP = UnitHealth("player")
+		local deadOrGhost = UnitIsDeadOrGhost("player")
+
+		if (destName == charName) and ((curHP < 2) or deadOrGhost) then
+			playSampleFromCollection(library.combat.EnvironmentDeath)
+		end
+		return
+	end
+end
+
+
+
+
 
 
 -- Sample playback functions
