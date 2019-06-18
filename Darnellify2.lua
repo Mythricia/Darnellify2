@@ -127,13 +127,20 @@ eventList =
 }
 
 
--- Event handlers
+-- Hooking DoEmote to play our own samples
+hooksecurefunc("DoEmote", function(emote, message)
+	if library.emotes[emote] then
+		playSampleFromCollection(library.emotes[emote])
+	end
+end)
+
+
+-- Addon load
 eventHandler["ADDON_LOADED"] = function(...)
 	if ... == addonName then
 		initialize()
 	end
 end
-
 
 -- Interface events
 eventHandler["MAIL_SHOW"] = function()
@@ -320,7 +327,7 @@ end
 -- NOTE: This event no longer carries a payload by itself, must use CombatLogGetCurrentEventInfo() to fetch them
 eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 	local logParams = {CombatLogGetCurrentEventInfo()}
-	local charName = UnitName("player")
+	local playerName = UnitName("player")
 
 	-- [1] = timeStamp,
 	-- [2] = eventType,
@@ -348,19 +355,30 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 	or (eventType == "RANGE_DAMAGE") then
 		critical = logParams[21]
 		overkill = logParams[16]
+
+		if (critical and (overkill == -1)) then
+			playSampleFromCollection(library.combat.CriticalHit)
+		elseif (critical and (overkill > 0) and (UnitHealthMax("target") > 1)) then
+			playSampleFromCollection(library.combat.CriticalKill)
+		end
 	elseif (eventType == "SWING_DAMAGE") then
 		critical = logParams[18]
 		overkill = logParams[13]
+
+		if (critical and (overkill == -1)) then
+			playSampleFromCollection(library.combat.CriticalHit)
+		elseif (critical and (overkill > 0) and (UnitHealthMax("target") > 1)) then
+			playSampleFromCollection(library.combat.CriticalKill)
+		end
 	end
 
-
 	-- Check for death from environmental damage (fall, drown, lava, etc)
-	if eventType == "ENVIRONMENTAL_DAMAGE" then
+	if (eventType == "ENVIRONMENTAL_DAMAGE") then
 		local amount = logParams[13]
 		local curHP = UnitHealth("player")
 		local deadOrGhost = UnitIsDeadOrGhost("player")
 
-		if (destName == charName) and ((curHP < 2) or deadOrGhost) then
+		if (destName == playerName) and ((curHP < 2) or deadOrGhost) then
 			playSampleFromCollection(library.combat.EnvironmentDeath)
 		end
 		return
@@ -386,8 +404,12 @@ function playSample(sample)
 			cooldownTimers[sample] = nil
 		end)
 	elseif DARN_DEBUG then
+		-- try to extract folder path to give a hint
+		local stopIndex = sample.path:find("\\") or -1
+		local folderName = sample.path:sub(1, stopIndex) or "UNKNOWN"
+
 		darnPrint("Sample skipped due to being on cooldown: "
-		..sample.path
+		..folderName
 		.." ("
 		..cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
 		.."s remaining)")
@@ -409,8 +431,12 @@ function playSampleFromCollection(collection)
 				end)
 			end
 		elseif DARN_DEBUG then
+			-- try to extract folder path to give a hint
+			local stopIndex = sample.path:find("\\") or -1
+			local folderName = sample.path:sub(1, stopIndex) or "UNKNOWN"
+
 			darnPrint("Sample skipped due to collection being on cooldown: "
-			..sample.path
+			..folderName
 			.." ("
 			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
@@ -509,14 +535,16 @@ slashCommands.spam = {
 	func = function(...)
 		DARN_DEBUG = not DARN_DEBUG
 		if DARN_DEBUG then
-			print(prettyName..": Verbose errors "..DarnColors.red.."enabled")
+			print(prettyName..": Verbose errors "..DarnColors.green.."enabled")
 		else
-			print(prettyName..": Verbose errors "..DarnColors.green.."disabled")
+			print(prettyName..": Verbose errors "..DarnColors.red.."disabled")
 		end
 	end,
 
 	desc = "Makes Darnellify2 very talkative! (Debugging messages)"
 }
+slashCommands.shutup = {func = slashCommands.spam.func} -- alias for .spam
+
 
 slashCommands.messages = {
 	func = function(...)

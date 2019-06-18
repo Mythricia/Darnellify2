@@ -24,8 +24,9 @@ An example:
 		{path = "Interface\\Mail_Open_5.mp3", cooldown = 5},
 
 		cooldown = 1,
+		-- TODO: add chance attribute
 		-- TODO: add delay attribute
-		-- TODO: We could have a reset attribute, containing a string array of conditional cd resets ("target" etc)
+		-- TODO: add reset attribute? containing a list of conditions that would instantly reset the CD
 	}
 
 
@@ -257,7 +258,21 @@ library.combat = {
 		cooldown = 5,
 	},
 
+	["CriticalHit"] = {
+		{path = "Combat\\Crit_1.mp3", cooldown = 3},
+		{path = "Combat\\Crit_2.mp3", cooldown = 3},
+		{path = "Combat\\Crit_3.mp3", cooldown = 3},
 
+		cooldown = 1,
+	},
+
+	["CriticalKill"] = { -- if it's both a killing blow AND a critical strike
+		{path = "Combat\\Crit_4.mp3", cooldown = 3},
+		{path = "Combat\\Crit_5.mp3", cooldown = 3},
+		{path = "Combat\\Crit_6.mp3", cooldown = 3},
+
+		cooldown = 1,
+	},
 }
 
 
@@ -292,6 +307,63 @@ library.mounts["Chocobo"] =
 		35027,  --"Swift Purple Hawkstrider"
 	}
 }
+
+
+-- Emotes!
+library.emotes = {
+	["DANCE"] = {
+		{path = "Emotes\\Dance_1.mp3"},
+		{path = "Emotes\\Dance_2.mp3"},
+		{path = "Emotes\\Dance_3.mp3"},
+
+		cooldown = 10
+	},
+
+	["BEG"] = {
+		{path = "Emotes\\Beg_1.mp3"},
+		{path = "Emotes\\Beg_2.mp3"},
+		{path = "Emotes\\Beg_3.mp3"},
+
+		cooldown = 10
+	},
+
+	["COWER"] = {
+		{path = "Emotes\\Cower_1.mp3"},
+		{path = "Emotes\\Cower_2.mp3"},
+		{path = "Emotes\\Cower_3.mp3"},
+
+		cooldown = 10
+	},
+
+	["SILLY"] = {
+		{path = "Silly_1.mp3"},
+		{path = "Emotes\\Silly_2.mp3"},
+		{path = "Emotes\\Silly_3.mp3"},
+
+		cooldown = 10
+	},
+
+	["FLIRT"] = {
+		{path = "Emotes\\Flirt_1.mp3"},
+		{path = "Emotes\\Flirt_2.mp3"},
+		{path = "Emotes\\Flirt_3.mp3"},
+
+		cooldown = 10
+	},
+
+	["HELLO"] = {
+		{path = "Emotes\\Hello_1.mp3", cooldown = 5},
+	},
+}
+
+-- These are duplicate emotes. They simply point to an existing collection above.
+-- Separated to look cleaner. Can easily be added above if desired (delete these duplicates though).
+library.emotes["JOKE"] 	= library.emotes.SILLY
+
+library.emotes["GREET"] = library.emotes.HELLO
+library.emotes["HAIL"] 	= library.emotes.HELLO
+library.emotes["HI"] 	= library.emotes.HELLO
+library.emotes["WAVE"] 	= library.emotes.HELLO
 
 
 
