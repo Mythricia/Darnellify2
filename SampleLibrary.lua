@@ -336,7 +336,7 @@ library.emotes = {
 	},
 
 	["SILLY"] = {
-		{path = "Silly_1.mp3"},
+		{path = "Emotes\\Silly_1.mp3"},
 		{path = "Emotes\\Silly_2.mp3"},
 		{path = "Emotes\\Silly_3.mp3"},
 
