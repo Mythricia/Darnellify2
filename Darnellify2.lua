@@ -117,6 +117,7 @@ eventList =
 	"MERCHANT_SHOW",
 	"MERCHANT_CLOSED",
 	"PLAYER_LEVEL_UP",
+	"ACHIEVEMENT_EARNED",
 	"PLAYER_MOUNT_DISPLAY_CHANGED",
 	"UNIT_SPELLCAST_SUCCEEDED",
 	"DUEL_REQUESTED",
@@ -190,6 +191,9 @@ end
 -- Player events (levelup, duel, achievement, etc)
 eventHandler["PLAYER_LEVEL_UP"] = function()
 playSampleFromCollection(library.player.Player_LevelUp)
+end
+eventHandler["ACHIEVEMENT_EARNED"] = function()
+	playSampleFromCollection(library.player.Player_LevelUp)
 end
 
 eventHandler["DUEL_REQUESTED"] = function() -- player RECIEVED a duel request
