@@ -489,7 +489,7 @@ end
 
 -- Utilities
 function darnPrint(msg)
-	DEFAULT_CHAT_FRAME:AddMessage(prettyName..":: \n" .. tostring(msg))
+	DEFAULT_CHAT_FRAME:AddMessage(prettyName..":: " .. tostring(msg))
 end
 
 -- Check if table contains KEY
@@ -547,7 +547,7 @@ slashCommands.spam = {
 
 	desc = "Makes Darnellify2 very talkative! (Debugging messages)"
 }
-slashCommands.shutup = {func = slashCommands.spam.func} -- alias for .spam
+slashCommands.shutup = slashCommands.spam -- alias for .spam
 
 
 slashCommands.messages = {
@@ -574,7 +574,7 @@ slashCommands.messages = {
 		end
 	end,
 
-	desc = "Show all log messages. Append 'clear' to clear log, 'export' to copy the log to clipboard."
+	desc = "Show all log messages. Use '/darn messages clear' to clear log"
 }
 
 
@@ -630,3 +630,35 @@ SLASH_Darnellify4 = "/Fony"
 SLASH_Darnellify5 = "/MikeB"
 
 SlashCmdList["Darnellify"] = slashProcessor
+
+
+
+-- Error hooking to capture Darnellify2 related errors to the messages log
+local default_errorHandler = geterrorhandler()
+local function darnError(errorMessage)
+	local parts = {strsplit("\\:", errorMessage)}
+
+	if (#parts > 0) and (parts[3] == addonName) then
+		local addon = parts[3]
+		local file = parts[4]
+		local line = parts[5]
+		local err = parts[6]:sub(2)
+
+		local errStr = format("Lua error!|r In file <"..
+		DarnColors.cyan..
+		"%s|r> @ line ["..
+		DarnColors.pink..
+		"%d|r]: "..
+		DarnColors.orange..
+		"%q|r", file, line, err)
+
+		logMessage(errStr, "ERROR")
+		print(DarnColors.yellow..addonName.."|r: Captured a Lua error. See /darn messages. ["..#messages.."]")
+		return
+	end
+
+	-- pass the errors on to the default handler
+	default_errorHandler(errorMessage)
+end
+
+seterrorhandler(darnError)
