@@ -115,7 +115,7 @@ local function playMusicFromCollection(collection, tag)
 			end
 		end)
 	else
-		local msg = ("Tried to play from an empty Mount collection! -> "..(tag or "UNDEFINED"))
+		local msg = ("Tried to play from an empty Mount collection! -> "..(tag or "?UNDEFINED?"))
 		if flags.DARN_DEBUG then
 			debugPrint(msg)
 		end
