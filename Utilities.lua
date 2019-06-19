@@ -38,6 +38,8 @@ end
 
 -- Fisher-Yates shuffle. Importantly this returns a NEW table, rather than modify the input.
 local function shuffle( tInput )
+	if #tInput == 1 then return {tInput[1]} end -- short-circuit if input length == 1
+
 	local tReturn = {}
 	local j
 
