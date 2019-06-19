@@ -22,53 +22,64 @@ local random = random
 local cooldownTimers = {}
 
 
--- Sample playback functions
-local function playSample(sample)
-	local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
-
-	if not cooldownTimers[sample] then
-		if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
-		cooldownTimers[sample] = GetTime()
-		PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
-
-		-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
-		C_Timer.After(cooldown, function()
-			cooldownTimers[sample] = nil
-		end)
-	elseif flags.DARN_DEBUG then
-		-- try to extract file name to give a hint
-		local nameStart = #sample.path - sample.path:reverse():find("\\") + 1
-		local fileName = sample.path:sub(nameStart+1) or "UNKNOWN"
-
-		debugPrint("Sample skipped due to being on cooldown: \""
-		..fileName
-		.."\" ("
-		..cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
-		.."s remaining)")
-	end
-end
-
-
 local function playSampleFromCollection(collection, tag)
-	if collection and (#collection > 0) then
-		local sample = collection[random(1, #collection)]
-		if not cooldownTimers[collection] then
-			playSample(sample)
+	local collectionSize = #collection
 
-			-- If collection has a cooldown value, apply it and schedule the expiration
-			if collection.cooldown then
-				cooldownTimers[collection] = GetTime()
-				C_Timer.After(collection.cooldown, function()
-					cooldownTimers[collection] = nil
-				end)
+	if collection and (collectionSize > 0) then
+
+		-- If Collection is not on cooldown, look through a shuffle of the collection,
+		-- until we find a sample that is off-cooldown
+		if not cooldownTimers[collection] then
+			local sample
+			local shuffled = shuffle(collection)
+
+			for k, randSample in pairs(shuffled) do
+				if not cooldownTimers[randSample] then
+					sample = randSample
+					break
+				end
 			end
+
+			-- If we found a sample, play it, schedule cooldown, etc
+			if sample then
+				PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
+
+				-- Put sample on cooldown
+				cooldownTimers[sample] = GetTime()
+
+				-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
+				local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
+				C_Timer.After(cooldown, function()
+					cooldownTimers[sample] = nil
+				end)
+
+				-- Debug print
+				if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
+
+				-- If Collection itself has a cooldown value, apply it and schedule that expiration too
+				if collection.cooldown then
+					cooldownTimers[collection] = GetTime()
+					C_Timer.After(collection.cooldown, function()
+						cooldownTimers[collection] = nil
+					end)
+				end
+
+			-- Was unable to find a free sample to play, complain about it
+			elseif flags.DARN_DEBUG then
+				local numStr = (collectionSize > 1) and ("all ["..collectionSize.."] samples") or "the only sample"
+				debugPrint("Playback skipped, "..numStr.." in the collection on cooldown: \""..tag.."\"")
+			end
+
+		-- Collection itself was on cooldown, skip
 		elseif flags.DARN_DEBUG then
-			debugPrint("Sample skipped due to collection being on cooldown: \""
+			debugPrint("Playback skipped due to Collection being on cooldown: \""
 			..(tag or "?UNKNOWN?")
 			.."\" ("
 			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
 		end
+
+	-- Empty collection, skip and complain
 	else
 		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "?UNDEFINED?"))
 		if flags.DARN_DEBUG then
@@ -78,10 +89,12 @@ local function playSampleFromCollection(collection, tag)
 	end
 end
 
-
+-- Only used for mount themes currently
 local function playMusicFromCollection(collection, tag)
-	if collection and (#collection > 0) then
-		local sample = collection[random(1, #collection)]
+	local collectionSize = #collection
+
+	if collection and (collectionSize > 0) then
+		local sample = collection[random(1, collectionSize)]
 		if flags.DARN_DEBUG then
 			debugPrint("Playing MountMusic: " .. sample.path)
 		end
