@@ -5,7 +5,8 @@ Darn.playback = {}
 -- Importing static flags and values
 local flags = Darn.flags
 -- Importing utilities
-local debugPrint 	= Darn.utils.debugPrint
+local debugPrint = Darn.utils.debugPrint
+local shuffle = Darn.utils.shuffle
 -- Logging
 local pushMessage = Darn.logging.pushMessage
 -- Locally scope functions

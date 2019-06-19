@@ -36,6 +36,19 @@ local function tableContains(t, val)
     return false
 end
 
+-- Fisher-Yates shuffle. Importantly this returns a NEW table, rather than modify the input.
+local function shuffle( tInput )
+	local tReturn = {}
+	local j
+
+    for i = #tInput, 1, -1 do
+        j = fastrandom(i) -- using WoW's fastrandom() here since this might be a tight loop
+        tInput[i], tInput[j] = tInput[j], tInput[i]
+        table.insert(tReturn, tInput[i])
+    end
+    return tReturn
+end
+
 -- Helper function  to clean up event hooking syntax
 local function isModern(passthroughEvent)
 	if Darn.flags.FAKE_CLASSIC then
@@ -50,4 +63,5 @@ Darn.utils.colors = colors
 Darn.utils.prettyName = prettyName
 Darn.utils.debugPrint = debugPrint
 Darn.utils.tableContains = tableContains
+Darn.utils.shuffle = shuffle
 Darn.utils.isModern = isModern
