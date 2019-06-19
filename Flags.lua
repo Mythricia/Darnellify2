@@ -7,5 +7,6 @@ Darn.flags.DARN_DEBUG = false
 
 Darn.flags.DEFAULT_SAMPLE_COOLDOWN = 1
 Darn.flags.BASE_SOUND_DIRECTORY = "Interface\\AddOns\\Darnellify2\\Sounds\\"
+Darn.flags.PLAYING_MUSIC = false
 
 Darn.flags.CLIENT_MAJOR_VER = tonumber(GetBuildInfo():sub(1,1))

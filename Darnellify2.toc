@@ -9,6 +9,8 @@ Flags.lua
 Utilities.lua
 Logging.lua
 
+Playback.lua
+
 SampleLibrary.lua
 Core.lua
 
