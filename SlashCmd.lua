@@ -77,7 +77,7 @@ slashCommands.messages = {
 
 
 -- Misc SlashCmd code
-function slashProcessor(cmd)
+local function slashProcessor(cmd)
 	-- split the recieved slashCmd into a root command plus any extra arguments
 	local parts = {}
 	local root
