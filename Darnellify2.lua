@@ -354,9 +354,9 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 	local critical
 	local overkill
 
-	if (eventType == "SPELL_DAMAGE")
+	if ((eventType == "SPELL_DAMAGE")
 	or (eventType == "SPELL_PERIODIC_DAMAGE")
-	or (eventType == "RANGE_DAMAGE") then
+	or (eventType == "RANGE_DAMAGE")) and sourceName == playerName then
 		critical = logParams[21]
 		overkill = logParams[16]
 
@@ -365,7 +365,7 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 		elseif (critical and (overkill > 0) and (UnitHealthMax("target") > 1)) then
 			playSampleFromCollection(library.combat.CriticalKill, "CriticalKill")
 		end
-	elseif (eventType == "SWING_DAMAGE") then
+	elseif (eventType == "SWING_DAMAGE") and sourceName == playerName then
 		critical = logParams[18]
 		overkill = logParams[13]
 
@@ -377,12 +377,12 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
 	end
 
 	-- Check for death from environmental damage (fall, drown, lava, etc)
-	if (eventType == "ENVIRONMENTAL_DAMAGE") then
+	if (eventType == "ENVIRONMENTAL_DAMAGE") and destName == playerName then
 		local amount = logParams[13]
 		local curHP = UnitHealth("player")
 		local deadOrGhost = UnitIsDeadOrGhost("player")
 
-		if (destName == playerName) and ((curHP < 2) or deadOrGhost) then
+		if (curHP < 2) or deadOrGhost then
 			playSampleFromCollection(library.combat.EnvironmentDeath, "EnvironmentDeath")
 		end
 		return
