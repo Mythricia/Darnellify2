@@ -210,7 +210,7 @@ local ErrorMessageMap = {
 	["There is nothing to attack."] = library.error.GenericNoTarget,
 	[ERR_GENERIC_STUNNED]	= library.error.GenericStunned,
 	[ERR_CLIENT_LOCKED_OUT] = library.error.GenericLockout,
-	
+
 	-- targeting / range errors
 	[ERR_BADATTACKPOS] 		= library.error.TooFarAway,
 	[ERR_LOOT_TOO_FAR] 		= library.error.TooFarAway,
@@ -329,7 +329,7 @@ eventHandler["COMBAT_LOG_EVENT_UNFILTERED"] = function()
     local eventType = logParams[2]
     local sourceName = logParams[5]
 	local destName = logParams[9]
-	
+
 	-- Only care about overkill and critical currently, map params accordingly
 	local critical
 	local overkill
@@ -388,13 +388,13 @@ function playSample(sample)
 			cooldownTimers[sample] = nil
 		end)
 	elseif flags.DARN_DEBUG then
-		-- try to extract folder path to give a hint
-		local stopIndex = sample.path:find("\\") or -1
-		local folderName = sample.path:sub(1, stopIndex) or "UNKNOWN"
+		-- try to extract file name to give a hint
+		local nameStart = #sample.path - sample.path:reverse():find("\\") + 1
+		local fileName = sample.path:sub(nameStart+1) or "UNKNOWN"
 
-		debugPrint("Sample skipped due to being on cooldown: "
-		..folderName
-		.." ("
+		debugPrint("Sample skipped due to being on cooldown: \""
+		..fileName
+		.."\" ("
 		..cooldown - string.format("%.2f", GetTime()-cooldownTimers[sample])
 		.."s remaining)")
 	end
@@ -415,18 +415,14 @@ function playSampleFromCollection(collection, tag)
 				end)
 			end
 		elseif flags.DARN_DEBUG then
-			-- try to extract folder path to give a hint
-			local stopIndex = sample.path:find("\\") or -1
-			local folderName = sample.path:sub(1, stopIndex) or "UNKNOWN"
-
-			debugPrint("Sample skipped due to collection being on cooldown: "
-			..folderName
-			.." ("
+			debugPrint("Sample skipped due to collection being on cooldown: \""
+			..(tag or "?UNKNOWN?")
+			.."\" ("
 			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
 		end
 	else
-		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "UNDEFINED"))
+		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "?UNDEFINED?"))
 		if flags.DARN_DEBUG then
 			debugPrint(msg)
 		end
