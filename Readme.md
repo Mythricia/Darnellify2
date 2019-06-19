@@ -36,6 +36,12 @@ https://twitch.tv/akamikeb
 
 
 # Changelog
+## [0.10.0] - 2019-06-19
+### Changed
+- Big change: Addon is now split off into several smaller files.
+- ToC load order is important now, as different modules depend on eachother
+- No big functional changes otherwise
+
 ## [0.9.1] - 2019-06-18
 ### Added
 - Comprehensive Lua error and custom warning logging added. See `/darn`
