@@ -22,6 +22,12 @@ local eventHandler = {}
 local eventList = {}
 local cooldownTimers = {}
 
+-- localize functions
+local C_Timer = C_Timer
+local GetTime = GetTime
+local PlaySoundFile = PlaySoundFile
+
+
 -- Forward declarations
 local playSample
 local playSampleFromCollection
