@@ -26,7 +26,6 @@ local function playSampleFromCollection(collection, tag)
 	local collectionSize = #collection
 
 	if collection and (collectionSize > 0) then
-
 		-- If Collection is not on cooldown, look through a shuffle of the collection,
 		-- until we find a sample that is off-cooldown
 		if not cooldownTimers[collection] then
@@ -63,13 +62,11 @@ local function playSampleFromCollection(collection, tag)
 						cooldownTimers[collection] = nil
 					end)
 				end
-
 			-- Was unable to find a free sample to play, complain about it
 			elseif flags.DARN_DEBUG then
 				local numStr = (collectionSize > 1) and ("all ["..collectionSize.."] samples") or "the only sample"
 				debugPrint("Playback skipped, "..numStr.." in the collection on cooldown: \""..tag.."\"")
 			end
-
 		-- Collection itself was on cooldown, skip
 		elseif flags.DARN_DEBUG then
 			debugPrint("Playback skipped due to Collection being on cooldown: \""
@@ -78,7 +75,6 @@ local function playSampleFromCollection(collection, tag)
 			..collection.cooldown - string.format("%.2f", GetTime()-cooldownTimers[collection])
 			.."s remaining)")
 		end
-
 	-- Empty collection, skip and complain
 	else
 		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "?UNDEFINED?"))
