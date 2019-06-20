@@ -44,39 +44,43 @@ local function playSampleFromCollection(collection, tag)
 		-- If Collection is not on cooldown, look through a shuffle of the collection,
 		-- until we find a sample that is off-cooldown
 		if not cooldownTimers[collection] then
-			local sample
-			local shuffled = shuffle(collection)
-
-			for k, randSample in pairs(shuffled) do
-				if not cooldownTimers[randSample] then
-					sample = randSample
-					break
+			if (fastrandom() < collection.chance or 1) then
+				local shuffled = shuffle(collection)
+				
+				local sample
+				for k, randSample in pairs(shuffled) do
+					if not cooldownTimers[randSample] then
+						if (fastrandom() < randSample.chance or 1) then
+							sample = randSample
+						end
+						break
+					end
 				end
-			end
 
-			-- If we found a sample, play it, schedule cooldown, etc
-			if sample then
-				PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
+				-- If we found a sample, play it, schedule cooldown, etc
+				if sample then
+					PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
 
-				-- Put sample on cooldown. The GetTime() value is currently unused
-				cooldownTimers[sample] = GetTime()
+					-- Put sample on cooldown. The GetTime() value is currently unused
+					cooldownTimers[sample] = GetTime()
 
-				-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
-				local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
-				scheduleReset(sample, tag, cooldown)
+					-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
+					local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
+					scheduleReset(sample, tag, cooldown)
 
-				-- Debug print
-				if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
+					-- Debug print
+					if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
 
-				-- If Collection itself has a cooldown value, apply it and schedule that expiration too
-				if collection.cooldown then
-					cooldownTimers[collection] = GetTime()
-					scheduleReset(collection, tag)
+					-- If Collection itself has a cooldown value, apply it and schedule that expiration too
+					if collection.cooldown then
+						cooldownTimers[collection] = GetTime()
+						scheduleReset(collection, tag)
+					end
+				-- Was unable to find a free sample to play, complain about it
+				elseif flags.DARN_DEBUG then
+					local numStr = (collectionSize > 1) and ("all ["..collectionSize.."] samples") or "the only sample"
+					debugPrint("Playback skipped, "..numStr.." in the collection on cooldown: \""..tag.."\"")
 				end
-			-- Was unable to find a free sample to play, complain about it
-			elseif flags.DARN_DEBUG then
-				local numStr = (collectionSize > 1) and ("all ["..collectionSize.."] samples") or "the only sample"
-				debugPrint("Playback skipped, "..numStr.." in the collection on cooldown: \""..tag.."\"")
 			end
 		-- Collection itself was on cooldown, skip
 		elseif flags.DARN_DEBUG then

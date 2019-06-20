@@ -24,7 +24,7 @@ An example:
 		{path = "Interface\\Mail_Open_5.mp3", cooldown = 5},
 
 		cooldown = 1,
-		-- TODO: add chance attribute
+		chance = 0.5, -- 50% chance to play if triggered
 		-- TODO: add delay attribute
 		-- TODO: add reset attribute? containing a list of conditions that would instantly reset the CD
 	}
@@ -33,12 +33,14 @@ An example:
 This is the collection for the "Mailbox_Open" event. The name is self-explanatory.
 It contains 5 different samples! Each time the event fires, a random sample will play.
 
-Each sample can have it's own Cooldown attribute (measured in seconds).
+Each sample can have it's own attributes;
+* cooldown -- period in seconds
+* chance   -- 0.5 = 50% chance
 
 Additionally, a collection as a whole can have a cooldown; no samples within will replay before it expires.
 These cooldowns can be mixed and matched as you desire.
 
-The cooldown can be set to 0.
+The cooldown can be set to 0. This will explicitly override the default cooldown of 1.
 --]]
 
 
@@ -264,6 +266,7 @@ library.combat = {
 		{path = "Combat\\Crit_3.mp3", cooldown = 3},
 
 		cooldown = 1,
+		chance = 0.1,
 	},
 
 	["CriticalKill"] = { -- if it's both a killing blow AND a critical strike
