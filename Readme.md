@@ -15,6 +15,7 @@ Roadmap (TBD):
 - [x] Easily extendable sound list in separate file
 - [x] Sounds split into sensible categories
 - [ ] Separate config profiles for world/dungeon/raid environments that apply automatically
+- [ ] Slash command to list mount theme categories, and also to add current mount to one of those categories
 - [x] Spam prevention (cooldowns)
 - [x] Configurable per-sound attributes (delay, cooldown)
   - (only **Cooldown** working for now, delay to be added later)
