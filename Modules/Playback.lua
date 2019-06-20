@@ -21,6 +21,21 @@ local random = random
 -- Internal table to keep track of what's on cooldown
 local cooldownTimers = {}
 
+-- "override" param can be passed to override the objects self-specified cooldown (used for Samples currently)
+local function scheduleReset(object, tag, cooldownOverride)
+	local cooldown = cooldownOverride or object.cooldown
+
+	if not cooldown then
+		local msg = "Tried to schedule a cooldown that could not be resolved: " .. (tag or "?UNKNOWN?")
+		pushMessage(msg, "ERROR")
+		return
+	end
+
+	C_Timer.After(cooldown, function()
+		cooldownTimers[object] = nil
+	end)
+end
+
 
 local function playSampleFromCollection(collection, tag)
 	if collection and (#collection > 0) then
@@ -43,14 +58,12 @@ local function playSampleFromCollection(collection, tag)
 			if sample then
 				PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
 
-				-- Put sample on cooldown
+				-- Put sample on cooldown. The GetTime() value is currently unused
 				cooldownTimers[sample] = GetTime()
 
 				-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
 				local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
-				C_Timer.After(cooldown, function()
-					cooldownTimers[sample] = nil
-				end)
+				scheduleReset(sample, tag, cooldown)
 
 				-- Debug print
 				if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
@@ -58,9 +71,7 @@ local function playSampleFromCollection(collection, tag)
 				-- If Collection itself has a cooldown value, apply it and schedule that expiration too
 				if collection.cooldown then
 					cooldownTimers[collection] = GetTime()
-					C_Timer.After(collection.cooldown, function()
-						cooldownTimers[collection] = nil
-					end)
+					scheduleReset(collection, tag)
 				end
 			-- Was unable to find a free sample to play, complain about it
 			elseif flags.DARN_DEBUG then
