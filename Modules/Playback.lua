@@ -23,9 +23,9 @@ local cooldownTimers = {}
 
 
 local function playSampleFromCollection(collection, tag)
-	local collectionSize = #collection
+	if collection and (#collection > 0) then
+		local collectionSize = #collection
 
-	if collection and (collectionSize > 0) then
 		-- If Collection is not on cooldown, look through a shuffle of the collection,
 		-- until we find a sample that is off-cooldown
 		if not cooldownTimers[collection] then
@@ -76,8 +76,14 @@ local function playSampleFromCollection(collection, tag)
 			.."s remaining)")
 		end
 	-- Empty collection, skip and complain
-	else
+	elseif collection then
 		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "?UNDEFINED?"))
+		if flags.DARN_DEBUG then
+			debugPrint(msg)
+		end
+		pushMessage(msg, "ERROR")
+	else
+		local msg = ("Tried to play from non-existent collection! -> " .. (tag or "?UNDEFINED?"))
 		if flags.DARN_DEBUG then
 			debugPrint(msg)
 		end
@@ -87,9 +93,9 @@ end
 
 -- Only used for mount themes currently
 local function playMusicFromCollection(collection, tag)
-	local collectionSize = #collection
+	if collection and (#collection > 0) then
+		local collectionSize = #collection
 
-	if collection and (collectionSize > 0) then
 		local sample = collection[random(1, collectionSize)]
 		if flags.DARN_DEBUG then
 			debugPrint("Playing MountMusic: " .. sample.path)
@@ -110,8 +116,14 @@ local function playMusicFromCollection(collection, tag)
 				flags.PLAYING_MUSIC = false
 			end
 		end)
-	else
+	elseif collection then
 		local msg = ("Tried to play from an empty Mount collection! -> "..(tag or "?UNDEFINED?"))
+		if flags.DARN_DEBUG then
+			debugPrint(msg)
+		end
+		pushMessage(msg, "ERROR")
+	else
+		local msg = ("Tried to play from non-existent Mount collection! -> " .. (tag or "?UNDEFINED?"))
 		if flags.DARN_DEBUG then
 			debugPrint(msg)
 		end
