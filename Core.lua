@@ -8,7 +8,6 @@ local MOUNTED					= IsMounted()
 -- Importing utilities
 local colors 		= Darn.utils.colors
 local prettyName	= Darn.utils.prettyName
-local debugPrint 	= Darn.utils.debugPrint
 local tableContains = Darn.utils.tableContains
 local isModern		= Darn.utils.isModern
 -- Logging
@@ -59,9 +58,6 @@ local function parseEvent(frame, event, ...)
 		eventHandler[event](...)
 	else
 		local msg = ("Event registered but not handled: \""..event.."\"")
-		if flags.DARN_DEBUG then
-			debugPrint(msg)
-		end
 		pushMessage(msg, "WARNING")
 	end
 end

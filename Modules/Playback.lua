@@ -89,15 +89,9 @@ local function playSampleFromCollection(collection, tag)
 	-- Empty collection, skip and complain
 	elseif collection then
 		local msg = ("Tried to play from an empty sample collection! -> "..(tag or "?UNDEFINED?"))
-		if flags.DARN_DEBUG then
-			debugPrint(msg)
-		end
 		pushMessage(msg, "ERROR")
 	else
 		local msg = ("Tried to play from non-existent collection! -> " .. (tag or "?UNDEFINED?"))
-		if flags.DARN_DEBUG then
-			debugPrint(msg)
-		end
 		pushMessage(msg, "ERROR")
 	end
 end
@@ -129,15 +123,9 @@ local function playMusicFromCollection(collection, tag)
 		end)
 	elseif collection then
 		local msg = ("Tried to play from an empty Mount collection! -> "..(tag or "?UNDEFINED?"))
-		if flags.DARN_DEBUG then
-			debugPrint(msg)
-		end
 		pushMessage(msg, "ERROR")
 	else
 		local msg = ("Tried to play from non-existent Mount collection! -> " .. (tag or "?UNDEFINED?"))
-		if flags.DARN_DEBUG then
-			debugPrint(msg)
-		end
 		pushMessage(msg, "ERROR")
 	end
 end

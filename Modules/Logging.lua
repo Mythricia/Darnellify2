@@ -2,9 +2,12 @@
 local addonName, Darn = ...
 Darn.logging = {}
 
--- Importing utilities
+-- Utilities
 local colors 		= Darn.utils.colors
 local prettyName	= Darn.utils.prettyName
+-- Flags
+local flags = Darn.flags
+local debugPrint = Darn.utils.debugPrint
 
 -- Locals
 local messages = {}
@@ -18,7 +21,11 @@ local function pushMessage(msg, msgType)
 	}
 
 	table.insert(messages, entry)
-	print(prettyName..": Logged "..msgType.." message. See "..colors.orange.."/darn messages|r. ["..#messages.."]")
+	if flags.DARN_DEBUG then
+		debugPrint(msg)
+	else
+		print(prettyName..": Logged "..msgType.." message. See "..colors.orange.."/darn messages|r. ["..#messages.."]")
+	end
 end
 
 -- Error hooking to capture Darnellify2 related errors to the messages log
