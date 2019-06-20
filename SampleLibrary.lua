@@ -23,9 +23,9 @@ An example:
 		{path = "Interface\\Mail_Open_4.mp3", cooldown = 5},
 		{path = "Interface\\Mail_Open_5.mp3", cooldown = 5},
 
-		cooldown = 1,
+		cooldown = 1, -- can only happen once per second
 		chance = 0.5, -- 50% chance to play if triggered
-		-- TODO: add delay attribute
+		delay = 1.5, -- plays 1.5 seconds after being triggered
 		-- TODO: add reset attribute? containing a list of conditions that would instantly reset the CD
 	}
 
@@ -36,6 +36,7 @@ It contains 5 different samples! Each time the event fires, a random sample will
 Each sample can have it's own attributes;
 * cooldown -- period in seconds
 * chance   -- 0.5 = 50% chance
+* delay    -- delay in seconds, before the sample plays
 
 Additionally, a collection as a whole can have a cooldown; no samples within will replay before it expires.
 These cooldowns can be mixed and matched as you desire.

@@ -44,13 +44,13 @@ local function playSampleFromCollection(collection, tag)
 		-- If Collection is not on cooldown, look through a shuffle of the collection,
 		-- until we find a sample that is off-cooldown
 		if not cooldownTimers[collection] then
-			if (fastrandom() < collection.chance or 1) then
+			if (fastrandom() < (collection.chance or 1)) then
 				local shuffled = shuffle(collection)
-				
+
 				local sample
 				for k, randSample in pairs(shuffled) do
 					if not cooldownTimers[randSample] then
-						if (fastrandom() < randSample.chance or 1) then
+						if (fastrandom() < (randSample.chance or 1)) then
 							sample = randSample
 						end
 						break
@@ -59,14 +59,25 @@ local function playSampleFromCollection(collection, tag)
 
 				-- If we found a sample, play it, schedule cooldown, etc
 				if sample then
-					PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
+
+					-- Find out if the collection or sample has a delay, and schedule playback accordingly
+					-- Sample delay takes precedence over collection, if it's defined, even as 0
+					local delay = sample.delay or collection.delay or nil
+
+					if delay then
+						C_Timer.After(delay, function()
+							PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
+						end)
+					else
+						PlaySoundFile(flags.BASE_SOUND_DIRECTORY .. sample.path)
+					end
 
 					-- Put sample on cooldown. The GetTime() value is currently unused
 					cooldownTimers[sample] = GetTime()
 
 					-- Schedule the removal of sample cooldown, if it exists (including 0!), default otherwise
-					local cooldown = sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN
-					scheduleReset(sample, tag, cooldown)
+					local sampleTotalCD = (sample.cooldown or flags.DEFAULT_SAMPLE_COOLDOWN) + (delay or 0)
+					scheduleReset(sample, tag, sampleTotalCD)
 
 					-- Debug print
 					if flags.DARN_DEBUG then debugPrint("Playing sample: "..sample.path) end
