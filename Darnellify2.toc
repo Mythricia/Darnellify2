@@ -5,13 +5,12 @@
 ## Notes: Boom, baby!
 ## SavedVariables: Darnellify2_Settings
 
-Flags.lua
-Utilities.lua
-Logging.lua
-
-Playback.lua
+Modules/Flags.lua
+Modules/Utilities.lua
+Modules/Logging.lua
+Modules/Playback.lua
 
 SampleLibrary.lua
 Core.lua
 
-SlashCmd.lua
+Modules/SlashCmd.lua
