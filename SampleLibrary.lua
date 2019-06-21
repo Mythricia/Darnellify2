@@ -372,5 +372,5 @@ library.emotes["WAVE"] 	= library.emotes.HELLO
 
 
 -- Passing the whole library back over to the core Darnellify addon code
-local _, addonTable = ...
-addonTable.library = library
+local _, Darn = ...
+Darn.library = library
