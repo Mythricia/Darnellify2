@@ -42,9 +42,10 @@ slashCommands.spam = {
 		end
 	end,
 
-	desc = "Makes Darnellify2 very talkative! (Debugging messages)"
+	desc = "Makes Darnellify2 very talkative! (Debugging messages)",
+
+	aliases = {"debug", "shutup", "verbose"}
 }
-slashCommands.shutup = slashCommands.spam -- alias for .spam
 
 
 slashCommands.messages = {
@@ -66,13 +67,13 @@ slashCommands.messages = {
 					print("["..k.."] ("..v.time..") "..v.msg)
 				end
 			end
-			print(prettyName..": clear message log with "..colors.orange.."/darn messages clear")
+			print(prettyName..": clear message log with '/darn messages clear'")
 		else
 			print(prettyName..": No log messages!")
 		end
 	end,
 
-	desc = "Show all log messages. Use "..colors.orange.."/darn messages clear|r to clear log"
+	desc = "Show all log messages. Use '/darn messages clear' to clear log"
 }
 
 
@@ -97,7 +98,16 @@ local function slashProcessor(cmd)
 			print(colors.yellow..addonName.." commands:")
 
 			for k, v in pairs(slashCommands) do
-				print(k)
+				local triggers = k
+
+				-- append any aliases defined
+				if v.aliases and (#v.aliases > 0) then
+					for _, alias in ipairs(v.aliases) do
+						triggers = triggers .. ", " .. alias
+					end
+				end
+
+				print(triggers)
 				if v.desc then
 					print(colors.cyan..slashListSeparator..colors.orange..v.desc)
 				else
@@ -108,15 +118,27 @@ local function slashProcessor(cmd)
 	end
 
 
-		-- Check if the root command exists, and call it. Else print error and list available commands + their description (if any)
-	if slashCommands[root] then
-		slashCommands[root].func(unpack(parts))
-	elseif root == nil then
+	-- Check if the root command exists, and call it. Else print error and list available commands + their description (if any)
+	if root then
+		local rootCmd = nil
+
+		-- Look if this is an alias of an actual command
+		for k, v in pairs(slashCommands) do
+			if (k == root) or (tableContains(v.aliases, root)) then
+				rootCmd = k
+				break
+			end
+		end
+
+		if rootCmd then
+			slashCommands[rootCmd].func(unpack(parts))
+		else
+			print(prettyName.." unrecognized command: "..colors.red..root)
+			print("List available commands with "..colors.cyan.."/darn|r or "..colors.cyan.."/darnellify")
+		end
+	else
 		print(prettyName..": ["..#messages.."] messages stored.")
 		printCmdList()
-	else
-		print(colors.yellow.."Darnellify".."r| unrecognized command: "..colors.red..root)
-		print("List available commands with "..colors.cyan.."/darn|r or "..colors.cyan.."/darnellify")
 	end
 end
 
