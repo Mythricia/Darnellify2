@@ -17,6 +17,7 @@ REM Remove any existing zip of this version
 del /Q %BUILDDIR%\%NAME%_%TAG%.zip
 
 xcopy /E /I /Y Sounds %NAME%\Sounds
+xcopy /E /I /Y Modules %NAME%\Modules
 copy /V /Y *.lua %NAME%
 copy /V /Y %NAME%.toc %NAME%
 copy /V /Y Readme.* %NAME%
