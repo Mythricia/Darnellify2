@@ -44,7 +44,7 @@ slashCommands.spam = {
 
 	desc = "Makes Darnellify2 very talkative! (Debugging messages)",
 
-	aliases = {"debug", "shutup", "verbose"}
+	aliases = {"debug", "shutup", "verbose"},
 }
 
 
@@ -73,7 +73,9 @@ slashCommands.messages = {
 		end
 	end,
 
-	desc = "Show all log messages. Use '/darn messages clear' to clear log"
+	desc = "Show all log messages. Use '/darn messages clear' to clear log",
+
+	aliases = {"log"},
 }
 
 
