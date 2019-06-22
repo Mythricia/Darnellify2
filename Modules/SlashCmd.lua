@@ -12,6 +12,7 @@ local pairsByKeys	= Darn.utils.pairsByKeys
 local flags = Darn.flags
 -- Logging
 local messages = Darn.logging.messages
+local pushMessage = Darn.logging.pushMessage
 -- Library
 local library = Darn.library
 -- Playback
@@ -85,11 +86,36 @@ slashCommands.messages = {
 
 -- Print list of event categories in the SampleLibrary
 slashCommands.library = {
-	func = function(cmd, category, collection)
-		if (cmd == "play") and category and collection then
-			print(prettyName..": Trying to play sample    "..category.."[\""..collection.."\"]")
+	func = function(cmd, arg1, arg2)
+		local function extractCatColl(a1, a2)
+			if not a1 then return end
+			local cat, coll
+			local patternMatch = "[%:%;%.%,%\\%/]"
+
+			-- See if we're being passed 2 args, or 1 arg with dot notation
+			if a1:find(patternMatch) then
+				cat	= a1:sub(1, a1:find(patternMatch)-1)
+				coll= a1:sub(a1:find(patternMatch)+1, -1)
+			else
+				cat = a1
+				coll= a2
+			end
+
+			return cat, coll
+		end
+
+		if (cmd == "play") then
+			local category, collection = extractCatColl(arg1, arg2)
+
+			if (not category) or (not collection) then
+				pushMessage("Invalid arguments for /darn library play <category> <collection>", "ERROR")
+				return
+			end
+
+			print(prettyName..": Trying to play sample -> "..category.."[\""..collection.."\"]")
 			playSampleFromCollection(library[category][collection], (category.."\\"..collection))
 		elseif (cmd == "list") then
+			print(prettyName..": Dumping sample library:")
 			for k, v in pairsByKeys(library) do
 				print("\""..k.."\" = ")
 				if type(v) == "table" then
@@ -103,6 +129,41 @@ slashCommands.library = {
 				end
 			end
 		elseif (cmd == "mute") then
+			local category, collection = extractCatColl(arg1, arg2)
+
+			-- Check that the cat and coll being requested actually exists
+			if category and (not library[category]) then
+				print(prettyName..": That category does not exist in the library: \""..colors.red..category.."|r\"")
+				return
+			end
+			if collection and (not library[category][collection]) then
+				print(prettyName..": That collection does not exist in the library: "..category.."[\""..colors.red..collection.."|r\"]")
+				return
+			end
+
+			-- Unhide if already hidden
+			if category and library[category].___hidden then
+				library[category] = library[category].___hidden
+				library[category].___hidden = nil
+				print(colors.green.."Unmuted category |r\""..category.."\"")
+			elseif (category and collection) and library[category][collection].___hidden then
+				library[category][collection] = library[category][collection].___hidden
+				library[category][collection].___hidden = nil
+				print(colors.green.."Unmuted collection |r"..category.."[\""..collection.."\"]")
+			else
+				-- Put cat or coll into a ___hidden subtable and replace the original with an empty table, effectively hiding it
+				if category and collection then
+					local coll = library[category][collection]
+					library[category][collection] = {}
+					library[category][collection].___hidden = coll
+					print(colors.red.."Muted collection|r "..category.."[\""..collection.."\"]")
+				elseif category then
+					local cat = library[category]
+					library[category] = {}
+					library[category].___hidden = cat
+					print(colors.red.."Muted category |r\""..category.."\"")
+				end
+			end
 		end
 	end,
 
