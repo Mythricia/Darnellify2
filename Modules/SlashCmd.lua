@@ -79,6 +79,42 @@ slashCommands.messages = {
 }
 
 
+-- Print list of event categories in the SampleLibrary
+slashCommands.library = {
+	func = function(...)
+	end,
+
+	desc = "Interact with the SampleLibrary. Try '/darn library [play, list, mute]'",
+
+	aliases = {"lib", "sample", "samples"},
+}
+
+-- Utility function to print all available commands
+local function printCmdList()
+	local slashListSeparator = "      `- "
+	if select("#", slashCommands) > 0 then
+		print(colors.yellow..addonName.." commands:")
+
+		for k, v in pairs(slashCommands) do
+			local triggers = k
+
+			-- append any aliases defined
+			if v.aliases and (#v.aliases > 0) then
+				for _, alias in ipairs(v.aliases) do
+					triggers = triggers .. ", " .. alias
+				end
+			end
+
+			print(triggers)
+			if v.desc then
+				print(colors.cyan..slashListSeparator..colors.orange..v.desc)
+			else
+				print(slashListSeparator..colors.red.."No Description")
+			end
+		end
+	end
+end
+
 -- Misc SlashCmd code
 local function slashProcessor(cmd)
 	-- split the recieved slashCmd into a root command plus any extra arguments
@@ -86,39 +122,12 @@ local function slashProcessor(cmd)
 	local root
 
 	for part in string.lower(cmd):gmatch("%S+") do
-		table.insert(parts, part)
+		table.insert(parts, part:lower())
 	end
 
 	-- Strip out and store the root command
 	root = parts[1]
 	table.remove(parts, 1)
-
-	-- Utility function to print all available commands
-	local function printCmdList()
-		local slashListSeparator = "      `- "
-		if select("#", slashCommands) > 0 then
-			print(colors.yellow..addonName.." commands:")
-
-			for k, v in pairs(slashCommands) do
-				local triggers = k
-
-				-- append any aliases defined
-				if v.aliases and (#v.aliases > 0) then
-					for _, alias in ipairs(v.aliases) do
-						triggers = triggers .. ", " .. alias
-					end
-				end
-
-				print(triggers)
-				if v.desc then
-					print(colors.cyan..slashListSeparator..colors.orange..v.desc)
-				else
-					print(slashListSeparator..colors.red.."No Description")
-				end
-			end
-		end
-	end
-
 
 	-- Check if the root command exists, and call it. Else print error and list available commands + their description (if any)
 	if root then
