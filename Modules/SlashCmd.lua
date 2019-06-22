@@ -135,7 +135,7 @@ local function slashProcessor(cmd)
 
 		-- Look if this is an alias of an actual command
 		for k, v in pairs(slashCommands) do
-			if (k == root) or (tableContains(v.aliases, root)) then
+			if (k:find(root) == 1) or (tableContains(v.aliases, root)) then
 				rootCmd = k
 				break
 			end
