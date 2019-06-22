@@ -1,18 +1,22 @@
 -- SlashCmd handling
 local addonName, Darn = ...
 
--- Importing utilities
+-- Utilities
 local colors 		= Darn.utils.colors
 local prettyName	= Darn.utils.prettyName
 local debugPrint 	= Darn.utils.debugPrint
 local tableContains = Darn.utils.tableContains
 local isModern		= Darn.utils.isModern
-
--- Importing flags (whole table)
+local pairsByKeys	= Darn.utils.pairsByKeys
+-- Flags
 local flags = Darn.flags
-
--- Logging message table
+-- Logging
 local messages = Darn.logging.messages
+-- Library
+local library = Darn.library
+-- Playback
+local playSampleFromCollection = Darn.playback.playSampleFromCollection
+
 
 -- SlashCmd handlers
 local slashCommands = {}
@@ -81,10 +85,28 @@ slashCommands.messages = {
 
 -- Print list of event categories in the SampleLibrary
 slashCommands.library = {
-	func = function(cmd, ...)
+	func = function(cmd, category, collection)
+		if (cmd == "play") and category and collection then
+			print(prettyName..": Trying to play sample    "..category.."[\""..collection.."\"]")
+			playSampleFromCollection(library[category][collection], (category.."\\"..collection))
+		elseif (cmd == "list") then
+			for k, v in pairsByKeys(library) do
+				print("\""..k.."\" = ")
+				if type(v) == "table" then
+					for k2, v2 in pairsByKeys(v) do
+						if k == "mounts" then
+							print(". . . " .. "["..((v2.music and #v2.music) or #v2).."] " .. k2)
+						else
+							print(". . . " .. "["..#v2.."] " .. k2)
+						end
+					end
+				end
+			end
+		elseif (cmd == "mute") then
+		end
 	end,
 
-	desc = "Interact with the SampleLibrary. Try '/darn library [play, list, mute]'",
+	desc = "Interact with the SampleLibrary. Try '/darn library [play <category> <collection>, list, mute <category> <collection>]'",
 
 	aliases = {"lib", "sample", "samples"},
 }
@@ -121,13 +143,15 @@ local function slashProcessor(cmd)
 	local parts = {}
 	local root
 
-	for part in string.lower(cmd):gmatch("%S+") do
-		table.insert(parts, part:lower())
+	for part in cmd:gmatch("%S+") do
+		table.insert(parts, part)
 	end
 
 	-- Strip out and store the root command
-	root = parts[1]
-	table.remove(parts, 1)
+	if #parts > 0 then
+		root = parts[1]:lower()
+		table.remove(parts, 1)
+	end
 
 	-- Check if the root command exists, and call it. Else print error and list available commands + their description (if any)
 	if root then
