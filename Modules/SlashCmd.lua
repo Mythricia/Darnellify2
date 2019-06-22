@@ -167,7 +167,7 @@ slashCommands.library = {
 		end
 	end,
 
-	desc = "Interact with the SampleLibrary. Try '/darn library [play <category> <collection>, list, mute <category> <collection>]'",
+	desc = "Interact with the sample library. Try '/darn library [play <category> <collection>, list, mute <category> <collection>]'",
 
 	aliases = {"lib", "sample", "samples"},
 }
