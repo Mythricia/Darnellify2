@@ -18,7 +18,7 @@ local messages = Darn.logging.messages
 local slashCommands = {}
 
 slashCommands.events = {
-	func = function(...)
+	func = function(cmd, ...)
 		print(" ")
 		print(prettyName.." hooked events ("..#Darn.eventList.."): ")
 		local modern = isModern("dummy") and "False" or "True"
@@ -33,7 +33,7 @@ slashCommands.events = {
 
 
 slashCommands.spam = {
-	func = function(...)
+	func = function(cmd, ...)
 		flags.DARN_DEBUG = not flags.DARN_DEBUG
 		if flags.DARN_DEBUG then
 			print(prettyName..": Verbose errors "..colors.green.."enabled")
@@ -49,8 +49,8 @@ slashCommands.spam = {
 
 
 slashCommands.messages = {
-	func = function(...)
-		if ... == "clear" then
+	func = function(cmd, ...)
+		if cmd == "clear" then
 			messages = {}
 			print(prettyName..": Messages cleared!")
 			return
@@ -81,7 +81,7 @@ slashCommands.messages = {
 
 -- Print list of event categories in the SampleLibrary
 slashCommands.library = {
-	func = function(...)
+	func = function(cmd, ...)
 	end,
 
 	desc = "Interact with the SampleLibrary. Try '/darn library [play, list, mute]'",
