@@ -36,6 +36,21 @@ local function tableContains(t, val)
     return false
 end
 
+-- Sort key-val pairs by key
+local function pairsByKeys(t, f)
+	local a = {}
+	for n in pairs(t) do table.insert(a, n) end
+	table.sort(a, f)
+	local i = 0      -- iterator variable
+	local iter = function ()   -- iterator function
+		i = i + 1
+		if a[i] == nil then return nil
+		else return a[i], t[a[i]]
+		end
+	end
+	return iter
+end
+
 -- Fisher-Yates shuffle. Importantly this returns a NEW table, rather than modify the input.
 local function shuffle( tInput )
 	if #tInput == 1 then return {tInput[1]} end -- short-circuit if input length == 1
@@ -66,4 +81,5 @@ Darn.utils.prettyName = prettyName
 Darn.utils.debugPrint = debugPrint
 Darn.utils.tableContains = tableContains
 Darn.utils.shuffle = shuffle
+Darn.utils.pairsByKeys = pairsByKeys
 Darn.utils.isModern = isModern
