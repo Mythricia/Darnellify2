@@ -111,7 +111,9 @@ slashCommands.library = {
 				pushMessage("Invalid arguments for /darn library play <category> <collection>", "ERROR")
 				return
 			end
-
+			
+			-- TODO: This shouldn't rely on playSampleFromCollection(), since that's susceptible to muting/randomness/delays etc
+			-- Instead, should use native WoW PlaySoundFile. Also should parse [i] indexing into collection to play specific sample...
 			print(prettyName..": Trying to play sample -> "..category.."[\""..collection.."\"]")
 			playSampleFromCollection(library[category][collection], (category.."\\"..collection))
 		elseif (cmd == "list") then
