@@ -17,8 +17,7 @@ Roadmap (TBD):
 - [ ] Separate config profiles for world/dungeon/raid environments that apply automatically
 - [ ] Slash command to list mount theme categories, and also to add current mount to one of those categories
 - [x] Spam prevention (cooldowns)
-- [x] Configurable per-sound attributes (delay, cooldown)
-  - (only **Cooldown** working for now, delay to be added later)
+- [x] Configurable per-category and / or per-event attributes (delay, cooldown, chance)
 - [ ] In-game options GUI to enable/disable sounds
 - [x] Error logging during alpha/beta
 
