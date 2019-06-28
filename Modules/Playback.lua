@@ -113,23 +113,23 @@ end
 
 -- Only used for mount themes currently
 local function playMusicFromCollection(collection, tag)
-	if collection and (#collection > 0) then
-		local collectionSize = #collection
-
-		local sample = collection[random(1, collectionSize)]
+	if collection.music and (#collection.music > 0) then
+		local collectionSize = #collection.music
+	
+		local sample = collection.music[random(1, collectionSize)]
 		if flags.DARN_DEBUG then
 			debugPrint("Playing MountMusic: " .. sample.path)
 		end
-
+	
 		PlayMusic(flags.BASE_SOUND_DIRECTORY .. sample.path)
-
+	
 		-- We need to schedule music to stop,
 		-- but only if the starting timestamp matches (we can only cancel ourselves)
 		flags.PLAYING_MUSIC = sample
-
+	
 		local startTime = GetTime()
 		cooldownTimers[sample] = startTime
-
+	
 		C_Timer.After(sample.cooldown, function()
 			if flags.PLAYING_MUSIC == sample and (cooldownTimers[sample] and cooldownTimers[sample] == startTime) then
 				StopMusic()

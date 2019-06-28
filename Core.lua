@@ -292,7 +292,7 @@ eventHandler["UNIT_SPELLCAST_SUCCEEDED"] = function(target, GUID, spellID)
 	if target == "player" then
 		for name, category in pairs(library.mounts) do
 			if tableContains(category.mounts, spellID) then
-				playMusicFromCollection(category.music, "mounts[\""..name.."\"]")
+				playMusicFromCollection(category, "mounts[\""..name.."\"]")
 				return
 			end
 		end
