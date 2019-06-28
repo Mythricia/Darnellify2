@@ -39,6 +39,9 @@ local function initialize()
 	-- TODO: This doesn't do anything
 	settings = Darnellify2_Settings or {}
 
+	-- temp access to addon table for in-game Lua browser. BUG: Remove this!!
+	DARNELLGLOBALACCESS = Darn
+
 	-- Check mount status. If dismount within 2 seconds of UI load, this will fail
 	C_Timer.After(2, function() MOUNTED = IsMounted() end)
 
